@@ -10,7 +10,7 @@ class Vertex
 public:
 	std::string indexVertex;//для индексации нейронов
 	std::list<Edges*> listEdges;//лист для сохранения индексов ребер 
-	long double value;
+	bool value;
 	bool ActivationFunc(long double vaule);
 };
 

@@ -31,21 +31,207 @@ void Graf::CreateNetwork(unsigned long long int amountInVertex, unsigned long lo
 			outputFile << "\t" << element->indexEdges << " " << element->weightEdges << "\n";
 		}
 	}
-
+	outputFile.close();
 }
 
-void Graf::Training()
+//реализация метода тренировки, при котором веса меняються рандомно
+void Graf::Training1() 
 {
+	auto randomIter = std::next(heshMapEdges.begin(), std::rand() % heshMapEdges.size());
+	double randomFraction = static_cast<double>(std::rand()) / RAND_MAX; // Генерация случайной дробной части [0, 1)
+	auto vaule = 2.0 * randomFraction - 1.0; // Масштабирование и смещение для диапазона (-1, 1)
+
+	valueListEdges.clear();
+
+	EditWeightEdges(randomIter->first, vaule);
+
+	// Создаем объект ofstream и открываем файл для записи (std::ios::out)
+	std::ofstream outputFile("1.txt", std::ios::out);
+
+	for (const auto& pair : heshMapVertex) {
+		outputFile << pair.first << "\n";
+		for (const auto& element : pair.second->listEdges) {
+			outputFile << "\t" << element->indexEdges << " " << element->weightEdges << "\n";
+		}
+	}
+	outputFile.close();
+}
+
+//реализация метода тренировки, при котором все веса которые себя хорошо показали, будут добавлены в срединие арифметическое 
+void Graf::Training2(bool result)
+{
+	valueListEdges.clear();
+	if(result)
+	{
+		if (nameEdges.size() != 0 && beforeEdges != nullptr) {
+			auto temp = heshMapEdges.find(beforeEdges->indexEdges);
+			temp->second->weightEdges = (temp->second->weightEdges + beforeEdges->weightEdges) / 2;
+			std::cout << result << '\t' << temp->first << '\t' << temp->second->weightEdges << '\n';
+
+
+
+			std::ofstream outputFile("1.txt", std::ios::out);
+			for (const auto& pair : heshMapVertex) {
+				outputFile << pair.first << "\n";
+				for (const auto& element : pair.second->listEdges) {
+					outputFile << "\t" << element->indexEdges << " " << element->weightEdges << "\n";
+				}
+			}
+			outputFile.close();
+		}
+	}
+	else
+	{
+		if (beforeEdges != nullptr)
+		{
+			heshMapEdges.find(beforeEdges->indexEdges)->second->weightEdges = beforeEdges->weightEdges;
+			delete beforeEdges;
+		}
+		beforeEdges = nullptr;
+		beforeEdges = new Edges;
+		auto randomIter = std::next(heshMapEdges.begin(), std::rand() % heshMapEdges.size());
+		double randomFraction = static_cast<double>(std::rand()) / RAND_MAX; //Генерация случайной дробной части(0, 1)
+		auto vaule = 2.0 * randomFraction - 1.0;
+
+		beforeEdges->weightEdges = randomIter->second->weightEdges;
+		beforeEdges->indexEdges = randomIter->second->indexEdges;
+
+		EditWeightEdges(randomIter->first, vaule);
+		nameEdges = randomIter->first;
+
+		std::cout << result << '\t' << randomIter->first << '\t' << randomIter->second->weightEdges << '\n';
+
+
+
+		// Создаем объект ofstream и открываем файл для записи (std::ios::out)
+		std::ofstream outputFile("1.txt", std::ios::out);
+		for (const auto& pair : heshMapVertex) {
+			outputFile << pair.first << "\n";
+			for (const auto& element : pair.second->listEdges) {
+				outputFile << "\t" << element->indexEdges << " " << element->weightEdges << "\n";
+			}
+		}
+		outputFile.close();
+	}
 
 }
+
+void Graf::Training3(bool result)
+{
+	valueListEdges.clear();
+	if (result)
+	{
+		amountGoodTry++;
+
+		auto temp = heshMapEdges.find(nameEdges);
+
+		cell = new StorageCell;
+
+		if (heshMapTrainingEdges.find(temp->first) != heshMapTrainingEdges.end())
+		{
+			auto temp1 = heshMapTrainingEdges.find(temp->first);
+
+			auto goodEdges = heshMapTrainingEdges.find(temp1->first);
+
+			cell->amoutnTry = amountGoodTry;
+			cell->weight = temp->second->weightEdges;
+
+			goodEdges->second->push_back(cell);
+		}
+		else
+		{
+			listStorageCell = new std::list<StorageCell*>;
+
+			cell->amoutnTry = amountGoodTry;
+			cell->weight = temp->second->weightEdges;
+			listStorageCell->push_back(cell);
+
+			heshMapTrainingEdges[temp->first] = listStorageCell;
+		}
+
+		//std::cout << "-----------------------\n";
+		//std::cout << nameEdges << '\n';
+		//std::cout << cell->weight << '\n';
+		//std::cout << "amountTraing " << amountTraing << '\n';
+		//std::cout << "-----------------------\n\n\n";
+
+		if (amountTraing >= 100)
+		{
+			std::unordered_map<std::string, std::list<StorageCell*>*> temp;
+			cell = new StorageCell;
+			listStorageCell = new std::list<StorageCell*>;
+
+			for (const auto& pair : heshMapTrainingEdges)//очистить ренее значения которые были, или добавить их средние и их итератор в статистику
+			{
+				std::cout << "-----------------------\n";
+				std::cout << pair.first << '\n';
+				std::cout << "amountTraing " << amountTraing << '\n';
+				std::cout << "-----------------------\n";
+
+				long double vaule = 0;
+				unsigned int iter = 0;
+				for (const auto& element : *pair.second)
+				{
+					std::cout << element->weight << " - " << element->amoutnTry << '\n';
+					vaule += (element->weight * element->amoutnTry);
+					iter += element->amoutnTry;
+				}
+				std::cout << "-----------------------\n";
+				std::cout << "vaule - " << vaule << " iter - " << iter << "\n";
+				vaule = vaule / iter;
+				std::cout << "vaule - " << vaule << "\n";
+				std::cout << "-----------------------\n\n\n";
+				heshMapEdges.find(pair.first)->second->weightEdges = vaule;
+
+				cell->amoutnTry = iter;
+				cell->weight = vaule;
+				listStorageCell->push_back(cell);
+				temp[pair.first] = listStorageCell;
+			}
+			heshMapTrainingEdges.clear();
+			heshMapTrainingEdges = temp;
+			temp.clear();
+
+			amountTraing = 0;
+		}
+	}
+	else
+	{
+		auto randomIter = std::next(heshMapEdges.begin(), std::rand() % heshMapEdges.size());
+		double randomFraction = static_cast<double>(std::rand()) / RAND_MAX; // Генерация случайной дробной части [0, 1)
+		auto vaule = 2.0 * randomFraction - 1.0; // Масштабирование и смещение для диапазона (-1, 1)
+
+		beforeEdges = randomIter->second;
+
+		valueListEdges.clear();
+
+		EditWeightEdges(randomIter->first, vaule);
+
+		nameEdges = randomIter->first;
+
+		amountGoodTry = 0;
+	}
+	amountTraing++;
+	std::ofstream outputFile("1.txt", std::ios::out);
+	for (const auto& pair : heshMapVertex) {
+		outputFile << pair.first << "\n";
+		for (const auto& element : pair.second->listEdges) {
+			outputFile << "\t" << element->indexEdges << " " << element->weightEdges << "\n";
+		}
+	}
+	outputFile.close();
+}
+
 //скорее всего прейдеться переделать если будут очень много выходных нейронов ибо тут все равно по списку идет, 
 //надо будет как-то сделать так чтобы переходило как-то по ребрам
-void Graf::Computation() 
+bool Graf::Computation(std::list<bool> vaules)
 {
 	
 	//Входные нейроны перебираем и даем значение для следующих нейронов
 	for (const auto& pair : heshMapInVertex) {
 		long double vaule = 0;
+		pair.second->value = *vaules.begin();
+		vaules.pop_front();
 		for (const auto& element : pair.second->listEdges) {//перебираем связи
 			//Сумматор и множитель одновремено 
 			vaule = (pair.second->value * element->weightEdges);
@@ -74,7 +260,7 @@ void Graf::Computation()
 	//Выходные нейроны
 	for (const auto& pair : heshMapOutVertex) {
 		//Активируем нейрон
-		std::cout << pair.second->ActivationFunc(valueListEdges.find(pair.first)->second) << '\t' << valueListEdges.find(pair.first)->second << '\n';
+		return pair.second->ActivationFunc(valueListEdges.find(pair.first)->second);//убрать после отладки
 	}
 }
 
@@ -82,6 +268,12 @@ Graf::~Graf()
 {
 	for (const auto& pair : heshMapVertex) {
 		for (const auto& element : pair.second->listEdges) {//перебираем связи
+			delete element;
+		}
+		delete pair.second;
+	}
+	for (const auto& pair : heshMapTrainingEdges) {
+		for (const auto& element : *pair.second) {//перебираем связи
 			delete element;
 		}
 		delete pair.second;
