@@ -118,6 +118,8 @@ void Graf::Training2(bool result)
 
 void Graf::Training3(bool result)
 {
+	counter++;
+	counterForAddVertex++;
 	valueListEdges.clear();
 	if (result)
 	{
@@ -149,51 +151,6 @@ void Graf::Training3(bool result)
 			heshMapTrainingEdges[temp->first] = listStorageCell;
 		}
 
-		//std::cout << "-----------------------\n";
-		//std::cout << nameEdges << '\n';
-		//std::cout << cell->weight << '\n';
-		//std::cout << "amountTraing " << amountTraing << '\n';
-		//std::cout << "-----------------------\n\n\n";
-
-		if (amountTraing >= 100)
-		{
-			std::unordered_map<std::string, std::list<StorageCell*>*> temp;
-			cell = new StorageCell;
-			listStorageCell = new std::list<StorageCell*>;
-
-			for (const auto& pair : heshMapTrainingEdges)//очистить ренее значения которые были, или добавить их средние и их итератор в статистику
-			{
-				std::cout << "-----------------------\n";
-				std::cout << pair.first << '\n';
-				std::cout << "amountTraing " << amountTraing << '\n';
-				std::cout << "-----------------------\n";
-
-				long double vaule = 0;
-				unsigned int iter = 0;
-				for (const auto& element : *pair.second)
-				{
-					std::cout << element->weight << " - " << element->amoutnTry << '\n';
-					vaule += (element->weight * element->amoutnTry);
-					iter += element->amoutnTry;
-				}
-				std::cout << "-----------------------\n";
-				std::cout << "vaule - " << vaule << " iter - " << iter << "\n";
-				vaule = vaule / iter;
-				std::cout << "vaule - " << vaule << "\n";
-				std::cout << "-----------------------\n\n\n";
-				heshMapEdges.find(pair.first)->second->weightEdges = vaule;
-
-				cell->amoutnTry = iter;
-				cell->weight = vaule;
-				listStorageCell->push_back(cell);
-				temp[pair.first] = listStorageCell;
-			}
-			heshMapTrainingEdges.clear();
-			heshMapTrainingEdges = temp;
-			temp.clear();
-
-			amountTraing = 0;
-		}
 	}
 	else
 	{
@@ -210,9 +167,65 @@ void Graf::Training3(bool result)
 		nameEdges = randomIter->first;
 
 		amountGoodTry = 0;
+
+		if (amountTraing >= 100)
+		{
+			std::unordered_map<std::string, std::list<StorageCell*>*> temp;
+
+			std::ofstream outputFile("log.txt", std::ios::app);
+			outputFile << counter << "\n\n";
+			for (const auto& pair : heshMapTrainingEdges)//очистить ранее значения которые были, или добавить их средние и их итератор в статистику
+			{
+				cell = new StorageCell;
+				listStorageCell = new std::list<StorageCell*>;
+				outputFile << "-----------------------\n";
+				outputFile << pair.first << '\n';
+				outputFile << "amountTraing " << amountTraing << '\n';
+				outputFile << "-----------------------\n";
+
+				long double vaule = 0;
+				unsigned int iter = 0;
+				for (const auto& element : *pair.second)
+				{
+					outputFile << element->weight << " - " << element->amoutnTry << '\n';
+					vaule += (element->weight * element->amoutnTry);
+					iter += element->amoutnTry;
+				}
+				outputFile << "-----------------------\n";
+				outputFile << "vaule - " << vaule << " iter - " << iter << "\n";
+				vaule = vaule / iter;
+				outputFile << "vaule - " << vaule << "\n";
+				outputFile << "-----------------------\n\n\n";
+				heshMapEdges.find(pair.first)->second->weightEdges = vaule;
+
+				cell->amoutnTry = 10;
+				cell->weight = vaule;
+				listStorageCell->push_back(cell);
+				temp[pair.first] = listStorageCell;
+			}
+			outputFile << "\n\n";
+			for (const auto& pair : heshMapVertex) {
+				outputFile << pair.first << "\n";
+				for (const auto& element : pair.second->listEdges) {
+					outputFile << "\t" << element->indexEdges << " " << element->weightEdges << "\n";
+				}
+			}
+			outputFile << "----------------------------------------------------------------------\n";
+			outputFile.close();
+			heshMapTrainingEdges.clear();
+			heshMapTrainingEdges = temp; 
+			temp.clear();				 
+
+			amountTraing = 0;
+		}
+		if (counterForAddVertex >= 1000)
+		{
+
+		}
 	}
 	amountTraing++;
 	std::ofstream outputFile("1.txt", std::ios::out);
+	//outputFile << counter << "\n\n";
 	for (const auto& pair : heshMapVertex) {
 		outputFile << pair.first << "\n";
 		for (const auto& element : pair.second->listEdges) {

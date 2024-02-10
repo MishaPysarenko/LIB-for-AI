@@ -30,6 +30,8 @@ private:
 	unsigned long long int amountVertex = 0;//количество узлов, для статистики
 	unsigned long long int amountOutVertex = 0;
 	unsigned long long int amountEdges = 0;//количество ребер, для статистики
+	unsigned long long int counter = 0;
+	unsigned long long int counterForAddVertex = 0;
 
 	std::unordered_map<std::string, Vertex*> heshMapVertex;//хеш-таблица для индексации всех нейронов
 	std::unordered_map<std::string, Vertex*> heshMapInVertex;//хеш-таблица для индексации входных нейронов

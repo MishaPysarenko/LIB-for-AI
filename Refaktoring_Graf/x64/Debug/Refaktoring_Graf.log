@@ -1,3 +1,2 @@
-﻿  Graf.cpp
-C:\C++\Refaktoring_Graf\Graf-for-AI\Refaktoring_Graf\Graf.cpp(265): warning C4715: 'Graf::Computation': not all control paths return a value
+﻿  main.cpp
   Refaktoring_Graf.vcxproj -> C:\C++\Refaktoring_Graf\Graf-for-AI\x64\Debug\Refaktoring_Graf.exe
