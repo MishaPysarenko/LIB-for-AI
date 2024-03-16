@@ -100,12 +100,11 @@ namespace ai
 
 	AI::AI(std::string nameProject, frame type)
 	{
-		Initialization(type);
-		
         std::string time = GetLocalTime();
-
         nameProjectFile = "AI-" + nameProject + ".txt";
         nameProjectLogFile = "AI-" + nameProject + " LOG " + time + ".txt";
+
+		Initialization(type);
 
         // Открываем файлы с сформированными именами
         std::ofstream AIFile(nameProjectFile, std::ios::out);

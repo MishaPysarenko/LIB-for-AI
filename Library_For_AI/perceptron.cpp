@@ -120,11 +120,129 @@ void ai::perceptron::CreateNetwork(size_t amountInVertex, size_t amountOutVertex
 
 void ai::perceptron::CreateNetwork(std::string nameFile, bool(*activationFuncPtr)(long double), bool(*activationOutFuncPtr)(long double))
 {
+	std::ifstream AIFile(nameFile);
+
+	// Проверка, открылся ли файл успешно
+	if (!AIFile) {
+		return;//Выход из функции
+	}
+
+	this->activationFuncPtr = activationFuncPtr;
+	this->activationOutFuncPtr = activationOutFuncPtr;
+
+	nameProjectFile = nameFile;
+	nameProjectLogFile = nameFile.substr(0, nameFile.find('.')) + " LOG " + GetLocalTime() + ".txt";
+
+	std::string strAmountLayer;
+	std::string temp;
+	std::string value;
+	std::getline(AIFile, temp);//для затирание символа типа нейронки 
+	std::getline(AIFile, strAmountLayer);
+	if (std::stoi(strAmountLayer) < 2)
+	{
+		return;
+	}
+	AddLayerInVertex();
+	AddLayerOutVertex();
+	std::getline(AIFile, value);
+	for (size_t i = 0; i < std::stoi(value); i++)
+	{
+		AddInVertex();
+	}
+	std::getline(AIFile, value);
+	for (size_t i = 0; i < std::stoi(value); i++)
+	{
+		AddOutVertex();
+	}
+	for (size_t i = 0; i < (std::stoi(strAmountLayer) - 2); i++)
+	{
+		AddLayerVertex();
+		std::getline(AIFile, value);
+		for (size_t i = 0; i < std::stoi(value); i++)
+		{
+			AddVertex(std::prev(std::prev(listVertex.end())));
+		}
+	}
+	std::string line;
+	while (std::getline(AIFile, line)) {
+		std::string firstVertex = line.substr(0, line.find('-'));
+		size_t length = line.find('=') - line.find('-') - 1;
+		std::string secondVertex = line.substr(line.find('-') + 1, length);
+		long double value = std::stod(line.substr(line.find('=') + 1));
+		
+		std::list<std::shared_ptr<Vertex>>::iterator firstNodeIterator;
+		std::list<std::shared_ptr<Vertex>>::iterator secondNodeIterator;
+
+		auto itLayer = listVertex.begin();
+		// Поиск первого узла
+		for (; itLayer != listVertex.end(); ++itLayer) {
+			for (auto itVertex = itLayer->begin(); itVertex != itLayer->end(); ++itVertex) {
+				if ((*itVertex)->indexVertex == firstVertex) {
+					firstNodeIterator = itVertex;
+					break;
+				}
+			}
+		}
+
+		// Поиск второго узла
+		for (itLayer = listVertex.begin(); itLayer != listVertex.end(); ++itLayer) {
+			for (auto itVertex = itLayer->begin(); itVertex != itLayer->end(); ++itVertex) {
+				if ((*itVertex)->indexVertex == secondVertex) {
+					secondNodeIterator = itVertex;
+					break;
+				}
+			}
+		}
+
+		// Если оба узла найдены, добавляем ребро
+		if (firstNodeIterator->get()->indexVertex != "" && secondNodeIterator->get()->indexVertex != "") {//тут ошибка
+			AddEdges(firstNodeIterator, secondNodeIterator, value);
+		}
+	}
+	std::ofstream LogFile(nameProjectLogFile, std::ios::out);
+	LogFile.close();
+	AIFile.close();
 }
 
 std::list<bool> ai::perceptron::Computation(std::list<bool> vaules)
 {
-	return std::list<bool>();
+	valueListEdges.clear();
+	std::list<bool> result;
+	if (vaules.size() != listVertex.front().size())
+		return result;
+
+	for(const auto& Node : listVertex.front())
+	{
+		valueListEdges[Node->indexVertex] = vaules.front();
+		vaules.pop_front();
+	}
+
+	for(const auto &Layer : listVertex)
+	{
+		for (const auto& Node : Layer)
+		{
+			auto tempValue = Node->ActivationFunc(valueListEdges.find(Node->indexVertex)->second);
+			auto list = Node->listEdges;
+			for (auto& tempList : *list)
+			{
+				if (valueListEdges.find(tempList->nextVertex->indexVertex) == valueListEdges.end())
+				{
+					valueListEdges[tempList->nextVertex->indexVertex] = tempValue * tempList->weightEdges;
+				}
+				else
+				{
+					valueListEdges.find(tempList->nextVertex->indexVertex)->second += tempValue * tempList->weightEdges;
+				}
+			}
+		}
+	}
+
+	for (const auto& Res : listVertex.back())
+	{
+		result.push_front(Res->ActivationFunc(valueListEdges.find(Res->indexVertex)->second));
+	}
+
+	return result;
 }
 
 void ai::perceptron::Training(bool result)
@@ -152,14 +270,11 @@ void ai::perceptron::SaveNetwork()
 	for (const auto& pair : listVertex)
 	{
 		outputFile << pair.size() << '\n';
-		for (const auto& it : pair)
-		{
-			for (const auto& element : *it->listEdges) {
-				outputFile << element->indexEdges << "=" << element->weightEdges << '\n';
-			}
-		}
 	}
 
+	for (const auto& pair : heshMapEdges) {
+		outputFile << pair.first << "=" << pair.second->weightEdges << '\n';
+	}
 
 	outputFile.close();
 }

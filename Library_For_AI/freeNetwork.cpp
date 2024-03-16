@@ -143,12 +143,17 @@ void ai::freeNetwork::CreateNetwork(std::string nameFile, bool(*activationFuncPt
 	if (!AIFile) {
 		return;//Выход из функции
 	}
+
+	this->activationFuncPtr = activationFuncPtr;
+	this->activationOutFuncPtr = activationOutFuncPtr;
+
 	nameProjectFile = nameFile;
 	nameProjectLogFile = nameFile.substr(0, nameFile.find('.')) + " LOG " + GetLocalTime() + ".txt";
 	std::string strAmountInVertex;
 	std::string strAmountOutVertex;
 	std::string strAmountInterVertex;
-	std::getline(AIFile, strAmountInVertex);//для затирание символа типа нейронки 
+	std::string temp;
+	std::getline(AIFile, temp);//для затирание символа типа нейронки 
 	std::getline(AIFile, strAmountInVertex);
 	std::getline(AIFile, strAmountOutVertex);
 	std::getline(AIFile, strAmountInterVertex);
@@ -173,10 +178,12 @@ void ai::freeNetwork::CreateNetwork(std::string nameFile, bool(*activationFuncPt
 		size_t length = line.find('=') - line.find('-') - 1;
 		std::string secondVertex = line.substr(line.find('-') + 1, length);
 		long double value = std::stod(line.substr(line.find('=') + 1));
+
 		AddEdges(firstVertex, secondVertex, value);
 	}
 	std::ofstream LogFile(nameProjectLogFile, std::ios::out);
 	LogFile.close();
+	AIFile.close();
 	Training(0);//костыль 
 }
 

@@ -21,5 +21,7 @@ namespace ai
 		bool ActivationFunc(long double value, bool(*activationFunc)(long double) = nullptr);
 		//
 		unsigned long long int counterPrt;
+
+		bool value;
 	};
 }
