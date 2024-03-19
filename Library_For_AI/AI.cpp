@@ -79,12 +79,12 @@ namespace ai
                 auto res = Computation(value);
                 if (result == res)
                 {
-                    ai->Training(1);
+                    ai->SelectionOfWeights(1);
                     percentResult++;
                 }
                 else
                 {
-                    ai->Training(0);
+                    ai->SelectionOfWeights(0);
                 }
                 counter++;
                 Value.clear();

@@ -114,6 +114,21 @@ void ai::perceptron::CreateNetwork(size_t amountInVertex, size_t amountOutVertex
 		AddOutVertex();
 	}
 
+	//Реализация добавления 3х слоев с 9ю нейронами 
+	//AddLayerVertex();
+	//auto itConnected = listVertex.begin();
+	//auto itAttached = std::next(itConnected);
+	//for (size_t i = 0; i < 5; i++)
+	//{
+	//	AddVertex(itAttached);
+	//}
+	//// Перебираем все слои за исключением последнего
+	//while (itAttached != listVertex.end()) {
+	//	AddLayerEdges(itConnected, itAttached);
+	//	++itConnected;
+	//	++itAttached;
+	//}
+
 	AddLayerEdges(listVertex.begin(), std::prev(listVertex.end()));
 	SaveNetwork();
 }
@@ -228,7 +243,7 @@ std::list<bool> ai::perceptron::Computation(std::list<bool> vaules)
 				if (valueListEdges.find(tempList->nextVertex->indexVertex) == valueListEdges.end())
 				{
 					valueListEdges[tempList->nextVertex->indexVertex] = tempValue * tempList->weightEdges;
-				}
+				} 
 				else
 				{
 					valueListEdges.find(tempList->nextVertex->indexVertex)->second += tempValue * tempList->weightEdges;
@@ -245,12 +260,9 @@ std::list<bool> ai::perceptron::Computation(std::list<bool> vaules)
 	return result;
 }
 
-void ai::perceptron::Training(bool result)
-{
-}
-
 void ai::perceptron::Logging(std::string nameProjectFile)
 {
+
 }
 
 void ai::perceptron::SaveNetwork()

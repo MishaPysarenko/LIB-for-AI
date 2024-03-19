@@ -1,11 +1,13 @@
 ﻿  AI.cpp
   AISpace.cpp
   Edges.cpp
-  Vertex.cpp
   freeNetwork.cpp
-C:\C++\Library_For_AI\Library_For_AI\freeNetwork.cpp(234,22): warning C4244: =: преобразование "unsigned __int64" в "unsigned int", возможна потеря данных
-C:\C++\Library_For_AI\Library_For_AI\freeNetwork.cpp(242,22): warning C4244: =: преобразование "unsigned __int64" в "unsigned int", возможна потеря данных
+C:\Users\Mike\Documents\AI\Library_For_AI\freeNetwork.cpp(229,22): warning C4244: =: преобразование "unsigned __int64" в "unsigned int", возможна потеря данных
+C:\Users\Mike\Documents\AI\Library_For_AI\freeNetwork.cpp(237,22): warning C4244: =: преобразование "unsigned __int64" в "unsigned int", возможна потеря данных
   main.cpp
   perceptron.cpp
+C:\Users\Mike\Documents\AI\Library_For_AI\perceptron.cpp(277,22): warning C4244: =: преобразование "unsigned __int64" в "unsigned int", возможна потеря данных
+C:\Users\Mike\Documents\AI\Library_For_AI\perceptron.cpp(285,22): warning C4244: =: преобразование "unsigned __int64" в "unsigned int", возможна потеря данных
+  Vertex.cpp
   Создание кода...
-  Library_For_AI.vcxproj -> C:\C++\Library_For_AI\x64\Debug\Library_For_AI.exe
+  Library_For_AI.vcxproj -> C:\Users\Mike\Documents\AI\x64\Debug\Library_For_AI.exe

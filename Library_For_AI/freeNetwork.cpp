@@ -110,7 +110,6 @@ void ai::freeNetwork::DeleteVertex(std::string nameVertex)
 
 void ai::freeNetwork::CreateNetwork(size_t amountInVertex, size_t amountOutVertex, bool(*activationFuncPtr)(long double), bool(*activationOutFuncPtr)(long double))
 {
-	std::cout << "CreateNetwork in freeNetwork\n";
 
 	this->activationFuncPtr = activationFuncPtr;
 	this->activationOutFuncPtr = activationOutFuncPtr;
@@ -132,7 +131,7 @@ void ai::freeNetwork::CreateNetwork(size_t amountInVertex, size_t amountOutVerte
 		}
 	}
 	SaveNetwork();
-	Training(0);//костыль 
+	SelectionOfWeights(0);//костыль 
 }
 
 void ai::freeNetwork::CreateNetwork(std::string nameFile, bool(*activationFuncPtr)(long double), bool(*activationOutFuncPtr)(long double))
@@ -184,7 +183,7 @@ void ai::freeNetwork::CreateNetwork(std::string nameFile, bool(*activationFuncPt
 	std::ofstream LogFile(nameProjectLogFile, std::ios::out);
 	LogFile.close();
 	AIFile.close();
-	Training(0);//костыль 
+	SelectionOfWeights(0);//костыль 
 }
 
 void ai::freeNetwork::SaveNetwork()
@@ -211,91 +210,6 @@ void ai::freeNetwork::SaveNetwork()
 std::list<bool> ai::freeNetwork::Computation(std::list<bool> vaules)
 {
 	return std::list<bool>();
-}
-
-void ai::freeNetwork::Training(bool result)
-{
-	counterTraing++;
-	counterForAddVertex++;//счетчик для добовление нейрона 
-	valueListEdges.clear();//очистить значение для нейронов 
-	if (result)
-	{
-		if (flag)//если под счет сумы показал хорошие результаты  
-		{
-			flag = 0;
-		}
-		amountGoodTry++;
-		auto tempEdges = heshMapEdges.find(nameEdges);
-		cell = std::make_shared<StorageCell>();
-		if (heshMapTrainingEdges.find(nameEdges) != heshMapTrainingEdges.end())
-		{
-			auto goodEdges = heshMapTrainingEdges.find(nameEdges);
-			cell->weight = tempEdges->second->weightEdges;
-			cell->amoutnTry = amountGoodTry;
-			goodEdges->second->push_back(*cell);
-		}
-		else
-		{
-			listStorageCell = std::make_shared<std::list<StorageCell>>();
-			//auto goodEdges = heshMapTrainingEdges.find(nameEdges);//Вероятная ошибка тут
-			cell->weight = tempEdges->second->weightEdges;
-			cell->amoutnTry = amountGoodTry;
-			listStorageCell->push_back(*cell);
-			heshMapTrainingEdges[nameEdges] = listStorageCell;
-		}
-	}
-	else
-	{
-		if (flag)//если под счет сумы показал плохие результаты то стереть их и начать занаво 
-		{
-			flag = 0;
-			heshMapTrainingEdges.clear();
-		}
-		amountGoodTry = 0;
-		auto randomIter = std::next(heshMapEdges.begin(), std::rand() % heshMapEdges.size());//взятие случайного ребра
-		EditWeightEdges(randomIter->first, RandomValue());//смена веса у ребра на рандомное значение в диапазое от -1 до 1
-		nameEdges = randomIter->first;//запись ребра которое поменяли
-		if (amountTraing >= 100)
-		{
-			amountTraing = 0;
-			std::unordered_map<std::string, std::shared_ptr<std::list<StorageCell>>> temp;
-			if (counterForAddVertex >= 1000)
-			{
-				counterForAddVertex = 0;
-
-			}
-			else
-			{
-				flag = 1;
-				for (const auto& pair : heshMapTrainingEdges)
-				{
-					cell = std::make_shared<StorageCell>();
-					listStorageCell = std::make_shared<std::list<StorageCell>>();
-					long double value = 0;
-					unsigned int iter = 0;
-					for (const auto& element : *pair.second)
-					{
-						value += element.weight;
-						iter += element.amoutnTry;
-					}
-					value = value / iter;
-					EditWeightEdges(pair.first, value);
-					cell->weight = value;
-					if (iter < 10)
-						cell->amoutnTry = 1;
-					else
-						cell->amoutnTry = 10;
-					listStorageCell->push_back(*cell);
-					temp[pair.first] = listStorageCell;
-				}
-			}
-			heshMapTrainingEdges.clear();
-			heshMapTrainingEdges = temp;
-			temp.clear();
-		}
-	}
-	amountTraing++;
-	SaveNetwork();
 }
 
 void ai::freeNetwork::Logging(std::string nameProjectFile)
