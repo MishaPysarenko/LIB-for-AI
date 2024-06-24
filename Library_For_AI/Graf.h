@@ -1,17 +1,21 @@
 #pragma once
 #include "Vertex.h"
 #include "Edges.h"
+#include "ActivationFunction.h"
 #include <memory>//умные указатели
 #include <unordered_map>//хеш-таблица для сохранения индексов узлов
 #include <fstream>//для сохраниния и записи с файла данных о графе для оптимизации большых обьемов данных
 #include <sstream>
+#include <cmath>
 
 #include <iostream>
 namespace ai
 {
 	long double RandomValue(long double localMax = 1, long double localMin = -1);
 	std::string GetLocalTime();
-
+	std::vector<int> CreateCombination(int k, int n, int m);
+	bool areAllValuesEqual(const std::list<float>& myList);
+	
 	class Graf
 	{
 	public:
@@ -45,17 +49,14 @@ namespace ai
 		unsigned long long int amountTraing = 0;
 		unsigned long long int counterTraing = 0;
 
-		bool(*activationFuncPtr)(long double) = nullptr;
-		bool(*activationOutFuncPtr)(long double) = nullptr;
-
 		//хеш-таблица для индексации ребер
 		std::unordered_map<std::string, std::shared_ptr<Edges>> heshMapEdges;
 		//хеш-таблица значений множителей ребер для каждего нейрона
 		std::unordered_map<std::string, std::shared_ptr<StorageCellForComputation>> valueListEdges;
 
-		virtual void CreateNetwork(size_t amountInVertex, size_t amountOutVertex,bool (*activationFuncPtr)(long double) = nullptr,bool(*activationOutFuncPtr)(long double) = nullptr)
+		virtual void CreateNetwork(size_t amountInVertex, size_t amountOutVertex)
 		{}
-		virtual void CreateNetwork(std::string nameFile,bool (*activationFuncPtr)(long double) = nullptr,bool(*activationOutFuncPtr)(long double) = nullptr)
+		virtual void CreateNetwork(std::string nameFile)
 		{}
 		virtual std::list<bool> Computation(std::list<bool> vaules)
 		{
@@ -70,6 +71,10 @@ namespace ai
 			if (result)
 			{
 				amountGoodTry++;
+				if (nameEdges == "")
+				{
+					return;
+				}
 				auto tempEdges = heshMapEdges.find(nameEdges);
 				cell = std::make_shared<StorageCell>();
 				if (heshMapTrainingEdges.find(nameEdges) != heshMapTrainingEdges.end())
@@ -83,7 +88,7 @@ namespace ai
 				{
 					listStorageCell = std::make_shared<std::list<StorageCell>>();
 					//auto goodEdges = heshMapTrainingEdges.find(nameEdges);//Вероятная ошибка тут
-					cell->weight = tempEdges->second->weightEdges;
+					cell->weight = tempEdges->second->weightEdges;//тут ошибка 
 					cell->amoutnTry = amountGoodTry;
 					listStorageCell->push_back(*cell);
 					heshMapTrainingEdges[nameEdges] = listStorageCell;
@@ -126,16 +131,35 @@ namespace ai
 				}
 			}
 			amountTraing++;
-			SaveNetwork();
 		}
-		virtual void PercentageTraining(unsigned int percentage)
+		void ClearMapTraing() {
+			heshMapTrainingEdges.clear();
+		}
+		virtual unsigned int CounterCombination()
+		{
+			return 0;
+		}
+		virtual void TryArchitecture(unsigned int amountVertex,unsigned int combinationNumber)
 		{}
+		virtual std::vector<std::shared_ptr<Graf>> GenerateCombinationFunctions()
+		{
+			std::vector<std::shared_ptr<Graf>> res;
+			return res;
+		}
 		virtual void EditWeightEdges(std::string nameEdges, long double weightEdges)
 		{}
 		virtual void Logging(std::string nameProjectFile)
 		{}
 		virtual void SaveNetwork()
 		{}
+		virtual void SaveNetwork(std::string nameFile)
+		{}
+		virtual void Show() {
+		};
+		virtual void Clear()
+		{}
+		virtual void Test(){
+		}
 		Graf(std::string nameFile, std::string nameLogFile)
 		{
 			nameProjectFile = nameFile;
@@ -143,5 +167,9 @@ namespace ai
 		}
 		Graf()
 		{}
+		~Graf()
+		{
+			SaveNetwork();
+		}
 	};
 }

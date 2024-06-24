@@ -42,7 +42,7 @@ void ai::freeNetwork::DeleteEdges(std::string nameVertex, std::string nameEdges)
 
 void ai::freeNetwork::AddVertex()
 {
-	vertex = std::make_shared<Vertex>(activationFuncPtr);//создаем в динам памяти новый нейрон
+	vertex = std::make_shared<Vertex>();//создаем в динам памяти новый нейрон
 	vertex->indexVertex = "M." + std::to_string(heshMapInterVertex.size());//даем ему имя согласно тому что выходные будут с перфиском "M."
 	heshMapVertex[vertex->indexVertex] = vertex;//записываем в хеш-таблицу
 	heshMapInterVertex[vertex->indexVertex] = vertex;//записываем в хеш-таблицу для промежуточных нейронов
@@ -58,7 +58,7 @@ void ai::freeNetwork::AddInVertex()
 
 void ai::freeNetwork::AddOutVertex()
 {
-	vertex = std::make_shared<Vertex>(activationOutFuncPtr);//создаем в динам памяти новый нейрон
+	vertex = std::make_shared<Vertex>();//создаем в динам памяти новый нейрон
 	vertex->indexVertex = "O." + std::to_string(heshMapOutVertex.size());//даем ему имя согласно тому что выходные будут с перфиском "O."
 	heshMapVertex[vertex->indexVertex] = vertex;//записываем в хеш-таблицу
 	heshMapOutVertex[vertex->indexVertex] = vertex;//записываем в хеш-таблицу для выходных нейронов
@@ -66,7 +66,7 @@ void ai::freeNetwork::AddOutVertex()
 
 void ai::freeNetwork::AddVertex(std::string vertexConnected, std::string vertexAttached)
 {
-	vertex = std::make_shared<Vertex>(activationFuncPtr);//создаем в динам памяти новый нейрон
+	vertex = std::make_shared<Vertex>();//создаем в динам памяти новый нейрон
 	vertex->indexVertex = "M." + std::to_string(heshMapInterVertex.size());//даем ему имя согласно тому что выходные будут с перфиском "M."
 	heshMapVertex[vertex->indexVertex] = vertex;//записываем в хеш-таблицу
 	heshMapInterVertex[vertex->indexVertex] = vertex;//записываем в хеш-таблицу для промежуточных нейронов
@@ -108,11 +108,8 @@ void ai::freeNetwork::DeleteVertex(std::string nameVertex)
 	}
 }
 
-void ai::freeNetwork::CreateNetwork(size_t amountInVertex, size_t amountOutVertex, bool(*activationFuncPtr)(long double), bool(*activationOutFuncPtr)(long double))
+void ai::freeNetwork::CreateNetwork(size_t amountInVertex, size_t amountOutVertex)
 {
-
-	this->activationFuncPtr = activationFuncPtr;
-	this->activationOutFuncPtr = activationOutFuncPtr;
 
 	for (unsigned long long int i = 0; i < amountInVertex; i++)
 	{
@@ -131,10 +128,9 @@ void ai::freeNetwork::CreateNetwork(size_t amountInVertex, size_t amountOutVerte
 		}
 	}
 	SaveNetwork();
-	SelectionOfWeights(0);//костыль 
 }
 
-void ai::freeNetwork::CreateNetwork(std::string nameFile, bool(*activationFuncPtr)(long double), bool(*activationOutFuncPtr)(long double))
+void ai::freeNetwork::CreateNetwork(std::string nameFile)
 {
 	std::ifstream AIFile(nameFile);
 
@@ -142,9 +138,6 @@ void ai::freeNetwork::CreateNetwork(std::string nameFile, bool(*activationFuncPt
 	if (!AIFile) {
 		return;//Выход из функции
 	}
-
-	this->activationFuncPtr = activationFuncPtr;
-	this->activationOutFuncPtr = activationOutFuncPtr;
 
 	nameProjectFile = nameFile;
 	nameProjectLogFile = nameFile.substr(0, nameFile.find('.')) + " LOG " + GetLocalTime() + ".txt";
@@ -183,7 +176,6 @@ void ai::freeNetwork::CreateNetwork(std::string nameFile, bool(*activationFuncPt
 	std::ofstream LogFile(nameProjectLogFile, std::ios::out);
 	LogFile.close();
 	AIFile.close();
-	SelectionOfWeights(0);//костыль 
 }
 
 void ai::freeNetwork::SaveNetwork()

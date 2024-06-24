@@ -127,18 +127,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ActivationFunction.h" />
     <ClInclude Include="AI.h" />
+    <ClInclude Include="CmdAndAPI.h" />
     <ClInclude Include="Edges.h" />
     <ClInclude Include="freeNetwork.h" />
     <ClInclude Include="Graf.h" />
+    <ClInclude Include="LogManager.h" />
     <ClInclude Include="perceptron.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AI.cpp" />
     <ClCompile Include="AISpace.cpp" />
+    <ClCompile Include="CmdAndAPI.cpp" />
     <ClCompile Include="Edges.cpp" />
     <ClCompile Include="freeNetwork.cpp" />
+    <ClCompile Include="LogManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="perceptron.cpp" />
     <ClCompile Include="Vertex.cpp" />

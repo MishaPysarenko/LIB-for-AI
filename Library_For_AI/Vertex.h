@@ -11,9 +11,9 @@ namespace ai
 
 	class Vertex
 	{
-		bool (*activationFunc)(long double);
 	public:
-		Vertex(bool (*activationFuncPtr)(long double) = nullptr);
+		bool (*activationFunc)(long double);
+		Vertex(bool (*activationFuncPtr)(long double) = nullptr, unsigned long long int iterFunc = 0);
 		//индекс нейрона или имя
 		std::string indexVertex;
 		//лист для сохранения индексов ребер 
@@ -23,5 +23,7 @@ namespace ai
 		unsigned long long int counterPrt;
 
 		bool value;
+
+		unsigned long long int iterFunc;
 	};
 }

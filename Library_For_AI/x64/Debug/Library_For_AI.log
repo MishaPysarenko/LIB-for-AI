@@ -1,13 +1,14 @@
-﻿  AI.cpp
-  AISpace.cpp
-  Edges.cpp
-  freeNetwork.cpp
-C:\Users\Mike\Documents\AI\Library_For_AI\freeNetwork.cpp(229,22): warning C4244: =: преобразование "unsigned __int64" в "unsigned int", возможна потеря данных
-C:\Users\Mike\Documents\AI\Library_For_AI\freeNetwork.cpp(237,22): warning C4244: =: преобразование "unsigned __int64" в "unsigned int", возможна потеря данных
-  main.cpp
-  perceptron.cpp
-C:\Users\Mike\Documents\AI\Library_For_AI\perceptron.cpp(277,22): warning C4244: =: преобразование "unsigned __int64" в "unsigned int", возможна потеря данных
-C:\Users\Mike\Documents\AI\Library_For_AI\perceptron.cpp(285,22): warning C4244: =: преобразование "unsigned __int64" в "unsigned int", возможна потеря данных
-  Vertex.cpp
-  Создание кода...
+﻿  main.cpp
+C:\Users\Mike\Documents\AI\Library_For_AI\Graf.h(80,24): warning C4244: =: преобразование "unsigned __int64" в "unsigned int", возможна потеря данных
+  (компиляция исходного файла "main.cpp")
+  
+C:\Users\Mike\Documents\AI\Library_For_AI\Graf.h(88,24): warning C4244: =: преобразование "unsigned __int64" в "unsigned int", возможна потеря данных
+  (компиляция исходного файла "main.cpp")
+  
+C:\Users\Mike\Documents\AI\Library_For_AI\main.cpp(58,22): warning C4566: символ, представленный универсальным именем символа "\u200B", невозможно представить в текущей кодовой странице (1251)
+C:\Users\Mike\Documents\AI\Library_For_AI\main.cpp(192,81): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\Mike\Documents\AI\Library_For_AI\main.cpp(227,77): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\Mike\Documents\AI\Library_For_AI\main.cpp(256,61): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+C:\Users\Mike\Documents\AI\Library_For_AI\main.cpp(308,57): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\Mike\Documents\AI\Library_For_AI\main.cpp(368,52): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
   Library_For_AI.vcxproj -> C:\Users\Mike\Documents\AI\x64\Debug\Library_For_AI.exe

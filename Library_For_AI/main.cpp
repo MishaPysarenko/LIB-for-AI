@@ -1,10 +1,8 @@
-#include "AI.h"
+﻿#include "AI.h"
+//#include "CmdAndAPI.h"
 
-int main()
+int main(int argc, char* argv[])
 {
-	ai::AI graf("PERCEPTRON2x5x2"/*, ai::PERCEPTRON*/);
-	//graf.CreateNetwork(2,2);
-	std::list<bool> v = { 1, 1 };
-	auto res = graf.Computation(v);
-	return 0;
+    ai::AI graf("test", ai::PERCEPTRON);
+    return 0;
 }

@@ -36,15 +36,15 @@ namespace ai
 		void DeleteVertex(std::string nameVertex);
 
 	public:
-		void CreateNetwork(size_t amountInVertex, size_t amountOutVertex, bool (*activationFuncPtr)(long double) = nullptr, bool(*activationOutFuncPtr)(long double) = nullptr) override;
-		void CreateNetwork(std::string nameFile, bool (*activationFuncPtr)(long double) = nullptr, bool(*activationOutFuncPtr)(long double) = nullptr)override;
+		void CreateNetwork(size_t amountInVertex, size_t amountOutVertex) override;
+		void CreateNetwork(std::string nameFile)override;
 		std::list<bool> Computation(std::list<bool> vaules) override;
 		//void SelectionOfWeights(bool result) override;
 		void Logging(std::string nameProjectFile) override;
 		void SaveNetwork() override;
 		~freeNetwork()
 		{
-			SaveNetwork();
+
 		}
 		freeNetwork(std::string nameFile, std::string nameLogFile)
 		{

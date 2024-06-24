@@ -1,10 +1,9 @@
 #pragma once
 #include "freeNetwork.h"
 #include "perceptron.h"
-
+#include "LogManager.h"
 namespace ai
 {
-
 	enum frame
 	{
 		PERCEPTRON,
@@ -15,29 +14,46 @@ namespace ai
 	{
 		std::string nameProjectFile;
 		std::string nameProjectLogFile;
-		
+
+		frame type;
+
 		std::shared_ptr<Graf> ai;
+		std::shared_ptr<Graf> tryAi;
+		std::shared_ptr<LogManager> log;
 
-		void Initialization(frame type);
-
+		unsigned int amountIn;
+		unsigned int amountOut;
 		bool doCreate = 0, doNamePrj = 0;
 
-		void CreateNetwork(std::string nameFile, 
-			bool (*activationFuncPtr)(long double) = nullptr,
-			bool(*activationOutFuncPtr)(long double) = nullptr);
+		void Initialization(frame type);
+		std::shared_ptr<Graf> Initialization();
+
+		void CreateNetwork(std::string nameFile);
+
+		float testCycle(std::string nameFile);
+		float testCycle(std::shared_ptr<Graf>, std::string nameFile);
+
+		std::vector<std::shared_ptr<Graf>> ArchitectureGenerator(std::shared_ptr<Graf> sampler, std::string nameFile);
+
+		std::vector<std::shared_ptr<Graf>> GenerationCF(std::shared_ptr<Graf> sampler);
 	public:
 
-		void CreateNetwork(size_t amountInVertex, size_t amountOutVertex, 
-			bool (*activationFuncPtr)(long double) = nullptr,
-			bool(*activationOutFuncPtr)(long double) = nullptr);
+		std::string getNameProject();
+
+		void SelectionOfWeights(bool res);
+
+		void CreateNetwork(size_t amountInVertex, size_t amountOutVertex);
 
 		std::list<bool> Computation(std::list<bool> vaules);
 
 		void DatasetTraining(std::string nameFile, float percent);
 
 		AI(std::string nameProject, frame type);
+		AI(std::string AIFile);
 
-		AI(std::string AIFile,bool (*activationFuncPtr)(long double) = nullptr,bool(*activationOutFuncPtr)(long double) = nullptr);
+		void Logging();
+
+		void Test();
 
 		void SaveNetwork();
 	};
