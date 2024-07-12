@@ -29,12 +29,11 @@ namespace ai
 		void CreateNetwork(size_t amountInVertex, size_t amountOutVertex) override;
 		void CreateNetwork(std::string nameFile)override;
 		std::list<bool> Computation(std::list<bool> vaules) override;
-		void Logging(std::string nameProjectFile) override;
 		void SaveNetwork() override;
 		void SaveNetwork(std::string nameFile) override;
 		unsigned int CounterCombination() override;
-		void TryArchitecture(unsigned int amountVertex, unsigned int combinationNumber) override;
-		std::vector<std::shared_ptr<Graf>> GenerateCombinationFunctions() override;
+		void TryArchitecture(unsigned int amountVertex) override;
+		void EditAtckFunk(unsigned int numberCombination) override;
 		void Clear() override;
 		void Show()override;
 		void Test()override;
@@ -43,10 +42,9 @@ namespace ai
 
 		}
 		perceptron(){}
-		perceptron(std::string nameFile, std::string nameLogFile)
+		perceptron(std::string nameFile)
 		{
 			nameProjectFile = nameFile;
-			nameProjectLogFile = nameLogFile;
 		}
 		perceptron(const ai::perceptron& sample)
 		{
@@ -72,7 +70,6 @@ namespace ai
 			this->valueListEdges = sample.valueListEdges;
 			this->nameEdges = sample.nameEdges;
 			this->nameProjectFile = sample.nameProjectFile;
-			this->nameProjectLogFile = sample.nameProjectLogFile;
 			this->heshMapEdges = sample.heshMapEdges; // Если они не содержат указателей
 			this->heshMapTrainingEdges = sample.heshMapTrainingEdges; // Если они не содержат указателей
 		}

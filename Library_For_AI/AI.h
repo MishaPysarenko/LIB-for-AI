@@ -13,7 +13,6 @@ namespace ai
 	class AI
 	{
 		std::string nameProjectFile;
-		std::string nameProjectLogFile;
 
 		frame type;
 
@@ -33,9 +32,8 @@ namespace ai
 		float testCycle(std::string nameFile);
 		float testCycle(std::shared_ptr<Graf>, std::string nameFile);
 
-		std::vector<std::shared_ptr<Graf>> ArchitectureGenerator(std::shared_ptr<Graf> sampler, std::string nameFile);
+		std::shared_ptr<Graf> ArchitectureGenerator(std::shared_ptr<Graf> sampler, std::string nameFile);
 
-		std::vector<std::shared_ptr<Graf>> GenerationCF(std::shared_ptr<Graf> sampler);
 	public:
 
 		std::string getNameProject();
@@ -46,7 +44,9 @@ namespace ai
 
 		std::list<bool> Computation(std::list<bool> vaules);
 
-		void DatasetTraining(std::string nameFile, float percent);
+		void DatasetTrainingDetailed(std::string nameFile, float percent);
+
+		void DatasetTrainingRough(std::string nameFile, float percent);
 
 		AI(std::string nameProject, frame type);
 		AI(std::string AIFile);

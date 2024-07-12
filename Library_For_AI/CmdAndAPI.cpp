@@ -198,7 +198,7 @@ void CmdAndAPI::commandInput(int argc, char* argv[])
                     continue;
                 }
                 send(clientSocket, "Start DatasetTraining", 22, 0);
-                network->DatasetTraining(values[1], std::stoi(values[2]));
+                //network->DatasetTraining(values[1], std::stoi(values[2]));
                 send(clientSocket, "Finish DatasetTraining", 23, 0);
             }
             else if (temp.substr(0, temp.find("_")) == "Compilation")
@@ -292,7 +292,7 @@ void CmdAndAPI::commandInput(int argc, char* argv[])
     else if (std::strcmp(argv[1], "DatasetTraining") == 0)
     {
         network = new ai::AI(argv[2]);
-        network->DatasetTraining(argv[3], std::stoi(argv[4]));
+        //network->DatasetTraining(argv[3], std::stoi(argv[4]));
         delete network;
         return;
     }

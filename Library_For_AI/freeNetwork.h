@@ -39,17 +39,14 @@ namespace ai
 		void CreateNetwork(size_t amountInVertex, size_t amountOutVertex) override;
 		void CreateNetwork(std::string nameFile)override;
 		std::list<bool> Computation(std::list<bool> vaules) override;
-		//void SelectionOfWeights(bool result) override;
-		void Logging(std::string nameProjectFile) override;
 		void SaveNetwork() override;
 		~freeNetwork()
 		{
 
 		}
-		freeNetwork(std::string nameFile, std::string nameLogFile)
+		freeNetwork(std::string nameFile)
 		{
 			nameProjectFile = nameFile;
-			nameProjectLogFile = nameLogFile;
 		}
 	};
 }

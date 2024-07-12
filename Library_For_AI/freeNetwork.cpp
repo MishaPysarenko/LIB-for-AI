@@ -140,7 +140,7 @@ void ai::freeNetwork::CreateNetwork(std::string nameFile)
 	}
 
 	nameProjectFile = nameFile;
-	nameProjectLogFile = nameFile.substr(0, nameFile.find('.')) + " LOG " + GetLocalTime() + ".txt";
+	//nameProjectLogFile = nameFile.substr(0, nameFile.find('.')) + " LOG " + GetLocalTime() + ".txt";
 	std::string strAmountInVertex;
 	std::string strAmountOutVertex;
 	std::string strAmountInterVertex;
@@ -173,17 +173,17 @@ void ai::freeNetwork::CreateNetwork(std::string nameFile)
 
 		AddEdges(firstVertex, secondVertex, value);
 	}
-	std::ofstream LogFile(nameProjectLogFile, std::ios::out);
-	LogFile.close();
+	//std::ofstream LogFile(nameProjectLogFile, std::ios::out);
+	//LogFile.close();
 	AIFile.close();
 }
 
 void ai::freeNetwork::SaveNetwork()
 {
-	if (nameProjectFile.size() == 0 || nameProjectLogFile.size() == 0)
+	if (nameProjectFile.size() == 0 /*|| nameProjectLogFile.size() == 0*/)
 	{
 		nameProjectFile = "AI-.txt";
-		nameProjectLogFile = "AI- LOG " + GetLocalTime() + ".txt";
+		//nameProjectLogFile = "AI- LOG " + GetLocalTime() + ".txt";
 	}
 
 	std::ofstream outputFile(nameProjectFile, std::ios::out);
@@ -204,67 +204,67 @@ std::list<bool> ai::freeNetwork::Computation(std::list<bool> vaules)
 	return std::list<bool>();
 }
 
-void ai::freeNetwork::Logging(std::string nameProjectFile)
-{
-	std::ofstream LogFile(nameProjectLogFile, std::ios::app);
-
-	if (!LogFile) {
-		return;//Выход из функции
-	}
-
-	LogFile << GetLocalTime() << '\n';
-	LogFile << "Vertex\nAmount of all nodes ";
-	LogFile << heshMapVertex.size();
-	LogFile << '\n';
-	LogFile << "-----------------------\n";
-	LogFile << "InVertex: " << heshMapInVertex.size() << '\n';
-	for (const auto& pair : heshMapInVertex)
-	{
-		LogFile << pair.first << " number of pointers to it: " << pair.second.get()->counterPrt << '\n';
-	}
-	LogFile << "-----------------------\n";
-	LogFile << "InterVertex: " << heshMapInterVertex.size() << '\n';
-	for (const auto& pair : heshMapInterVertex)
-	{
-		LogFile << pair.first << " number of pointers to it: " << pair.second.get()->counterPrt << '\n';
-	}
-	LogFile << "-----------------------\n";
-	LogFile << "OutVertex: " << heshMapOutVertex.size() << '\n';
-	for (const auto& pair : heshMapOutVertex)
-	{
-		LogFile << pair.first << " number of pointers to it: " << pair.second.get()->counterPrt << '\n';
-	}
-	LogFile << "-----------------------\n";
-	LogFile << "Edges\n";
-	for (const auto& pair : heshMapEdges)
-	{
-		LogFile << pair.first << ' ' << pair.second->weightEdges <<'\n';
-	}
-	LogFile << "-----------------------\n";
-	LogFile << "TrainingEdges\ncounter Traing = " << counterTraing << '\n'
-		<< "Size TrainingEdges = " << heshMapTrainingEdges.size() << '\n';
-	for (const auto& pair : heshMapTrainingEdges)
-	{
-		LogFile << "-----------------------\n";
-		LogFile << pair.first << '\n';
-		LogFile << "-----------------------\n";
-
-		long double vaule = 0;
-		unsigned int iter = 0;
-
-		auto& list = *pair.second;//получаем ссылку на список
-		for (auto it = list.begin(); it != list.end(); ++it)
-		{
-			LogFile << (*it).weight << " - " << (*it).amoutnTry << '\n';
-			vaule += ((*it).weight * (*it).amoutnTry);
-			iter += ((*it).amoutnTry);
-		}
-		LogFile << "-----------------------\n";
-		LogFile << "vaule - " << vaule << " iter - " << iter << "\n";
-		vaule = vaule / iter;
-		LogFile << "average number - " << vaule << "\n";
-	}
-	LogFile << "-----------------------\n";
-	LogFile << "\n\n\n\n";
-	LogFile.close();
-}
+//void ai::freeNetwork::Logging(std::string nameProjectFile)
+//{
+//	std::ofstream LogFile(nameProjectLogFile, std::ios::app);
+//
+//	if (!LogFile) {
+//		return;//Выход из функции
+//	}
+//
+//	LogFile << GetLocalTime() << '\n';
+//	LogFile << "Vertex\nAmount of all nodes ";
+//	LogFile << heshMapVertex.size();
+//	LogFile << '\n';
+//	LogFile << "-----------------------\n";
+//	LogFile << "InVertex: " << heshMapInVertex.size() << '\n';
+//	for (const auto& pair : heshMapInVertex)
+//	{
+//		LogFile << pair.first << " number of pointers to it: " << pair.second.get()->counterPrt << '\n';
+//	}
+//	LogFile << "-----------------------\n";
+//	LogFile << "InterVertex: " << heshMapInterVertex.size() << '\n';
+//	for (const auto& pair : heshMapInterVertex)
+//	{
+//		LogFile << pair.first << " number of pointers to it: " << pair.second.get()->counterPrt << '\n';
+//	}
+//	LogFile << "-----------------------\n";
+//	LogFile << "OutVertex: " << heshMapOutVertex.size() << '\n';
+//	for (const auto& pair : heshMapOutVertex)
+//	{
+//		LogFile << pair.first << " number of pointers to it: " << pair.second.get()->counterPrt << '\n';
+//	}
+//	LogFile << "-----------------------\n";
+//	LogFile << "Edges\n";
+//	for (const auto& pair : heshMapEdges)
+//	{
+//		LogFile << pair.first << ' ' << pair.second->weightEdges <<'\n';
+//	}
+//	LogFile << "-----------------------\n";
+//	LogFile << "TrainingEdges\ncounter Traing = " << counterTraing << '\n'
+//		<< "Size TrainingEdges = " << heshMapTrainingEdges.size() << '\n';
+//	for (const auto& pair : heshMapTrainingEdges)
+//	{
+//		LogFile << "-----------------------\n";
+//		LogFile << pair.first << '\n';
+//		LogFile << "-----------------------\n";
+//
+//		long double vaule = 0;
+//		unsigned int iter = 0;
+//
+//		auto& list = *pair.second;//получаем ссылку на список
+//		for (auto it = list.begin(); it != list.end(); ++it)
+//		{
+//			LogFile << (*it).weight << " - " << (*it).amoutnTry << '\n';
+//			vaule += ((*it).weight * (*it).amoutnTry);
+//			iter += ((*it).amoutnTry);
+//		}
+//		LogFile << "-----------------------\n";
+//		LogFile << "vaule - " << vaule << " iter - " << iter << "\n";
+//		vaule = vaule / iter;
+//		LogFile << "average number - " << vaule << "\n";
+//	}
+//	LogFile << "-----------------------\n";
+//	LogFile << "\n\n\n\n";
+//	LogFile.close();
+//}

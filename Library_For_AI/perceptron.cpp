@@ -283,11 +283,6 @@ std::list<bool> ai::perceptron::Computation(std::list<bool> vaules)
 	return result;
 }
 
-void ai::perceptron::Logging(std::string nameProjectFile)
-{
-
-}
-
 void ai::perceptron::SaveNetwork()
 {
 	if (nameProjectFile.size() == 0/* || nameProjectLogFile.size() == 0*/)
@@ -321,10 +316,9 @@ void ai::perceptron::SaveNetwork()
 
 void ai::perceptron::SaveNetwork(std::string nameFile)
 {
-	if (nameProjectFile.size() == 0/* || nameProjectLogFile.size() == 0*/)
+	if (nameProjectFile.size() == 0)
 	{
 		nameProjectFile = "AI-.txt";
-		//nameProjectLogFile = "AI- LOG " + GetLocalTime() + ".txt";
 	}
 
 	std::ofstream outputFile(nameFile, std::ios::out);
@@ -357,24 +351,19 @@ unsigned int ai::perceptron::CounterCombination()
 	{
 		amountComb = amountComb + pair.size();
 	}
-	return amountComb;
+	return std::pow(activationFunctions.size(), amountComb);
 }
 
-void ai::perceptron::TryArchitecture(unsigned int amountVertex, unsigned int combinationNumber)
+void ai::perceptron::TryArchitecture(unsigned int amountVertex)
 {
 	//Реализация добавления 3х слоев с 9ю нейронами 
 	AddLayerVertex();
 	auto itConnected = std::prev(listVertex.end());
 	auto itAttached = std::prev(itConnected);
-	//костыль
-	if (amountVertex < 1)
-	{
-		amountVertex = 1;
-	}
-	auto combination = CreateCombination(combinationNumber, amountVertex, activationFunctions.size());
+	
 	for (size_t i = 0; i < amountVertex; i++)
 	{
-		AddVertex(itAttached, activationFunctions[combination[i]], combination[i]);
+		AddVertex(itAttached);
 	}
 	// Перебираем все слои за исключением последнего
 	heshMapEdges.clear();
@@ -387,69 +376,25 @@ void ai::perceptron::TryArchitecture(unsigned int amountVertex, unsigned int com
 	}
 }
 
-std::vector<std::shared_ptr<ai::Graf>> ai::perceptron::GenerateCombinationFunctions()
+void ai::perceptron::EditAtckFunk(unsigned int numberCombination)
 {
-	std::vector<std::shared_ptr<Graf>> res;
-	std::shared_ptr<perceptron> tempObj;
-	auto itList = listVertex.begin();
-	auto itVertex = itList->begin();
-	unsigned int it = 0;
-	auto temp = itVertex;
-	auto temp1 = itList;
-	while (true)
+	unsigned int amountComb = 0;
+	for (const auto& pair : listVertex)
 	{
-		temp1 = itList;
-		temp = itVertex;
-		if (itVertex->get()->iterFunc < (activationFunctions.size() - 1))
-		{
-			itVertex->get()->iterFunc = it;
-			itVertex->get()->activationFunc = activationFunctions[it];//
-			it++;
-		}
-		else
-		{
-			temp++;
-			if (temp != itList->end() && temp->get()->iterFunc != (activationFunctions.size() - 1))//ошибка возникает тут после инкримации itList
-			{
-				itVertex->get()->iterFunc = 0;
-				itVertex->get()->activationFunc = activationFunctions[0];
-				itVertex++;
-				it = 1;
-				itVertex->get()->iterFunc = it;
-				itVertex->get()->activationFunc = activationFunctions[it];
-			}
-			else
-			{
-				temp1++;
-				temp = itList->begin();
-				if (itList != listVertex.end() && temp->get()->iterFunc == (activationFunctions.size() - 1))
-				{
-					if (temp1 == listVertex.end() || temp1->begin()->get()->iterFunc == (activationFunctions.size() - 1))
-					{
-						break;
-					}
-					else
-					{
-						while (itVertex != itList->end())
-						{
-							itVertex->get()->iterFunc = 0;
-							itVertex->get()->activationFunc = activationFunctions[0];
-							itVertex++;
-						}
-						itList++;
-					}
-				}
-				itVertex = itList->begin();
-				it = 1;
-			}
-		}
-
-		// Создание новой копии текущего состояния perceptron и добавление её в res
-		//Try = new ai::perceptron(this);
-		std::shared_ptr<perceptron> tempObj = std::make_shared<perceptron>(*this);
-		res.push_back(tempObj);
+		amountComb = amountComb + pair.size();
 	}
-	return res;
+
+	auto combination = CreateCombination(numberCombination, amountComb, activationFunctions.size());
+
+	unsigned int i = 0;
+	for (const auto& pair : listVertex)
+	{
+		for (const auto& it : pair)
+		{
+			it->activationFunc = activationFunctions[combination[i]-1];
+			i++;
+		}
+	}
 }
 
 void ai::perceptron::Clear()
@@ -483,22 +428,6 @@ void ai::perceptron::Test()
 		AddOutVertex(activationFunctions[0], 0);
 	}
 
-	//AddLayerVertex();
-	//auto itConnected = std::prev(listVertex.end());
-	//auto itAttached = std::prev(itConnected);
-	//for (size_t i = 0; i < 90; i++)
-	//{
-	//	AddVertex(itAttached, activationFunctions[0]);
-	//}
-
-	//AddLayerVertex();
-	//auto itConnected = std::prev(listVertex.end());
-	//auto itAttached = std::prev(itConnected);
-	//for (size_t i = 0; i < 80; i++)
-	//{
-	//	AddVertex(itAttached, activationFunctions[0]);
-	//}
-
 	AddLayerVertex();
 	auto itConnected = std::prev(listVertex.end());
 	auto itAttached = std::prev(itConnected);
@@ -507,53 +436,6 @@ void ai::perceptron::Test()
 		AddVertex(itAttached, activationFunctions[0]);
 	}
 
-	//AddLayerVertex();
-	// itConnected = std::prev(listVertex.end());
-	// itAttached = std::prev(itConnected);
-	//for (size_t i = 0; i < 60; i++)
-	//{
-	//	AddVertex(itAttached, activationFunctions[0]);
-	//}
-
-	//AddLayerVertex();
-	// itConnected = std::prev(listVertex.end());
-	// itAttached = std::prev(itConnected);
-	//for (size_t i = 0; i < 50; i++)
-	//{
-	//	AddVertex(itAttached, activationFunctions[0]);
-	//}
-
-	AddLayerVertex();
-	 itConnected = std::prev(listVertex.end());
-	 itAttached = std::prev(itConnected);
-	for (size_t i = 0; i < 40; i++)
-	{
-		AddVertex(itAttached, activationFunctions[0]);
-	}
-
-	//AddLayerVertex();
-	// itConnected = std::prev(listVertex.end());
-	// itAttached = std::prev(itConnected);
-	//for (size_t i = 0; i < 30; i++)
-	//{
-	//	AddVertex(itAttached, activationFunctions[0]);
-	//}
-
-	//AddLayerVertex();
-	// itConnected = std::prev(listVertex.end());
-	// itAttached = std::prev(itConnected);
-	//for (size_t i = 0; i < 20; i++)
-	//{
-	//	AddVertex(itAttached, activationFunctions[0]);
-	//}
-
-	//AddLayerVertex();
-	// itConnected = std::prev(listVertex.end());
-	// itAttached = std::prev(itConnected);
-	//for (size_t i = 0; i < 10; i++)
-	//{
-	//	AddVertex(itAttached, activationFunctions[0]);
-	//}
 
 	// Перебираем все слои за исключением последнего
 	heshMapEdges.clear();
@@ -567,21 +449,3 @@ void ai::perceptron::Test()
 
 	SaveNetwork();
 }
-
-//void ai::perceptron::GenerateCombinationFunctions(unsigned int combinationNumber, unsigned int combinationNumberTwo)
-//{
-//	auto combinationForOne = CreateCombination(combinationNumber, listVertex.begin()->size(), activationFunctions.size());
-//	auto combinationForTwo = CreateCombination(combinationNumberTwo, std::prev(listVertex.end())->size(), activationFunctions.size());
-//	size_t i = 0;
-//	for (auto pair : *listVertex.begin())
-//	{
-//		pair->activationFunc = activationFunctions[combinationForOne[i]];
-//		i++;
-//	}
-//	i = 0;
-//	for (auto pair : *std::prev(listVertex.end()))
-//	{
-//		pair->activationFunc = activationFunctions[combinationForOne[i]];
-//		i++;
-//	}
-//}

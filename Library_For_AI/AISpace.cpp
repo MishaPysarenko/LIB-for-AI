@@ -1,4 +1,6 @@
 #include "AI.h"
+#include "AISpace.h"
+
 #include <cstdlib>//для генерации рандомных чисел
 #include <ctime>
 #include <chrono>//для времени, название лог файла
