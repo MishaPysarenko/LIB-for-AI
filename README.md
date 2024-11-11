@@ -24,3 +24,5 @@ In future iterations, we aim to:
 - Expand support for additional activation functions and training algorithms.
 - Enhance compatibility with larger datasets by optimizing memory usage.
 - Refine the visualization tools for more intuitive graph representation.
+  
+![Безымянный](https://github.com/user-attachments/assets/a66c35b2-a6bb-416e-a256-9933d02d82da)
