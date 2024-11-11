@@ -157,10 +157,10 @@ void ai::perceptron::CreateNetwork(std::string nameFile)
 	std::string strAmountLayer;
 	std::string temp;
 	std::string value;
-	std::getline(AIFile, temp);//для затирание символа типа нейронки 
+	std::getline(AIFile, temp);
+	std::getline(AIFile, temp);
 	std::getline(AIFile, strAmountLayer);
-	if (std::stoi(strAmountLayer) < 2)//тут ошибка
-		//проверка на правильность нейроной сети, если меньше 2 то сеть неправильная 
+	if (std::stoi(strAmountLayer) < 2)//проверка на правильность нейроной сети, если меньше 2 то сеть неправильная 
 	{
 		return;
 	}
@@ -170,6 +170,7 @@ void ai::perceptron::CreateNetwork(std::string nameFile)
 	std::string amountVertex = value.substr(0, value.find('-'));
 	size_t length = value.find('-')+1;
 	std::string actFuck = value.substr(length, value.find('.')-2);
+	amountIn = std::stoi(amountVertex);
 	for (size_t i = 0; i < std::stoi(amountVertex); i++)
 	{
 		AddInVertex(activationFunctions[std::stoi(actFuck)], std::stoi(actFuck));
@@ -194,6 +195,7 @@ void ai::perceptron::CreateNetwork(std::string nameFile)
 	amountVertex = value.substr(0, value.find('-'));
 	length = value.find('-') + 1;
 	actFuck = value.substr(length, value.find('.') - 2);
+	amountOut = std::stoi(value);
 	for (size_t i = 0; i < std::stoi(value); i++)
 	{
 		AddOutVertex(activationFunctions[std::stoi(actFuck)], std::stoi(actFuck));
@@ -242,10 +244,10 @@ void ai::perceptron::CreateNetwork(std::string nameFile)
 	AIFile.close();
 }
 
-std::list<bool> ai::perceptron::Computation(std::list<bool> vaules)
+std::list<NWDT> ai::perceptron::Computation(std::list<NWDT> vaules)
 {
 	valueListEdges.clear();
-	std::list<bool> result;
+	std::list<NWDT> result;
 	if (vaules.size() != listVertex.front().size())
 		return result;
 
@@ -292,6 +294,8 @@ void ai::perceptron::SaveNetwork()
 	}
 
 	std::ofstream outputFile(nameProjectFile, std::ios::out);
+
+	outputFile << typeConvert << '\n';
 
 	outputFile << "P\n";//тип нейроной сети
 

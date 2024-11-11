@@ -1,8 +1,75 @@
 #include "CmdAndAPI.h"
 
+void CmdAndAPI::Help()
+{
+    std::cout << "\nAll command and API\n";
+    std::cout << "\tCOMMAND\n";
+    std::cout << "OpenSession - this command is for opening TCP/IP ports and working directly with the neural network\n";
+    std::cout << "Has the following arguments -\n";
+    std::cout << "<Number port>\n\n";
+    std::cout << "CreateProject - this command to create a new neural network:\n";
+    std::cout << "Has the following arguments -\n";
+    std::cout << "<Project name> <Neural network type> <Number of input neurons> <Number of output neurons>\n\n";
+    std::cout << "DatasetTraining - this command is for opening an AI file and training on a pre-prepared data set\n";
+    std::cout << "Has the following arguments -\n";
+    std::cout << "<AI File> <Data Set File> <Expected percentage of correct answers>\n";
+    std::cout << "\tAPI\n";//----------------------------------------------------------------
+    std::cout << "When sending requests, the symbol <_> must be placed between the lines.\n";
+    std::cout << "CloseSession - this command is for close TCP/IP connection\n";
+    std::cout << "This command is not have arguments\n\n";
+    std::cout << "OpenProject - open and create a project based on the AI file\n";
+    std::cout << "Has the following arguments -\n";
+    std::cout << "<Project Name File>\n\n";
+    std::cout << "CreateProject - this command to create a new neural network:\n";
+    std::cout << "Has the following arguments -\n";
+    std::cout << "<Project name>_<Neural network type>_<Number of input neurons>_<Number of output neurons>\n\n";
+    std::cout << "DatasetTraining - this command is for opening an AI file and training on a pre-prepared data set\n";
+    std::cout << "Before use you need to create a project!\nHas the following arguments -\n";
+    std::cout << "<Data Set File>_<Expected percentage of correct answers>\n\n";
+    std::cout << "Compilation - compiles the AI response\n";
+    std::cout << "Before use you need to create a project!\nHas the following arguments -\n";
+    std::cout << "<bit sequence of data>\n\n";
+    std::cout << "SelectionOfWeights - selects weights for edges in the AI ??based on previous actions. \n1 - AI answer is correct \n0 - AI answer is NOT correct\n";
+    std::cout << "Before use, you must create a project and use it once!\nHas the following arguments -\n";
+    std::cout << "<1 or 0>\n\n";
+}
+
+void CmdAndAPI::CreateProject(int argc, char* argv[])
+{
+    std::string value[4];
+    if (argc < 6)
+    {
+        std::cout << "Not all arguments\n";
+        return;
+    }
+    for (size_t i = 2; i < 6; i++)
+    {
+        value[i - 2] = argv[i];
+    }
+    if (value[1] != "PERCEPTRON")
+    {
+        std::cout << "Argument <Neural network type> is not corect\n";
+        std::cout << "variety of types available now:\n";
+        std::cout << "1.PERCEPTRON\n";
+        return;
+    }
+    if (std::stoi(value[3]) < 1 && std::stoi(value[2]) < 1)
+    {
+        std::cout << "Arguments <Number of input neurons> <Number of output neurons> is not corect\n";
+        std::cout << "Arguments cannot be less than 1\n";
+        return;
+    }
+    if (value[1] == "PERCEPTRON")
+    {
+        network = new ai::AI(value[0], ai::PERCEPTRON, ai::DATA_DATA);
+        network->CreateNetwork(std::stoi(value[2]), std::stoi(value[3]));
+        delete network;
+    }
+    std::cout << "Successfully Created\n";
+}
+
 void CmdAndAPI::commandInput(int argc, char* argv[])
 {
-    ai::AI* network = nullptr;
     if (argc == 1)
     {
         std::cout << "Enter the command - help\n";
@@ -10,70 +77,12 @@ void CmdAndAPI::commandInput(int argc, char* argv[])
     }
     if (std::strcmp(argv[1], "help") == 0)
     {
-        std::cout << "\nAll command and API\n";
-        std::cout << "\tCOMMAND\n";
-        std::cout << "OpenSession - this command is for opening TCP/IP ports and working directly with the neural network\n";
-        std::cout << "Has the following arguments -\n";
-        std::cout << "<Number port>\n\n";
-        std::cout << "CreateProject - this command to create a new neural network:\n";
-        std::cout << "Has the following arguments -\n";
-        std::cout << "<Project name> <Neural network type> <Number of input neurons> <Number of output neurons>\n\n";
-        std::cout << "DatasetTraining - this command is for opening an AI file and training on a pre-prepared data set\n";
-        std::cout << "Has the following arguments -\n";
-        std::cout << "<AI File> <Data Set File> <Expected percentage of correct answers>\n";
-        std::cout << "\tAPI\n";//----------------------------------------------------------------
-        std::cout << "When sending requests, the symbol <_> must be placed between the lines.\n";
-        std::cout << "CloseSession - this command is for close TCP/IP connection\n";
-        std::cout << "This command is not have arguments\n\n";
-        std::cout << "OpenProject - open and create a project based on the AI file\n";
-        std::cout << "Has the following arguments -\n";
-        std::cout << "<Project Name File>\n\n";
-        std::cout << "CreateProject - this command to create a new neural network:\n";
-        std::cout << "Has the following arguments -\n";
-        std::cout << "<Project name>_<Neural network type>_<Number of input neurons>_<Number of output neurons>\n\n";
-        std::cout << "DatasetTraining - this command is for opening an AI file and training on a pre-prepared data set\n";
-        std::cout << "Before use you need to create a project!\nHas the following arguments -\n";
-        std::cout << "<Data Set File>_<Expected percentage of correct answers>\n\n";
-        std::cout << "Compilation - compiles the AI response\n";
-        std::cout << "Before use you need to create a project!\nHas the following arguments -\n";
-        std::cout << "<bit sequence of data>\n\n";
-        std::cout << "SelectionOfWeights - selects weights for edges in the AI ??based on previous actions. \n1 - AI answer is correct \n0 - AI answer is NOT correct\n";
-        std::cout << "Before use, you must create a project and use it once!\nHas the following arguments -\n";
-        std::cout << "<1 or 0>\n\n";
+        Help();
         return;
     }
     else if (std::strcmp(argv[1], "CreateProject") == 0)
     {
-        std::string value[4];
-        if (argc < 6)
-        {
-            std::cout << "Not all arguments\n";
-            return;
-        }
-        for (size_t i = 2; i < 6; i++)
-        {
-            value[i - 2] = argv[i];
-        }
-        if (value[1] != "PERCEPTRON")
-        {
-            std::cout << "Argument <Neural network type> is not corect\n";
-            std::cout << "variety of types available now:\n";
-            std::cout << "1.PERCEPTRON\n";
-            return;
-        }
-        if (std::stoi(value[3]) < 1 && std::stoi(value[2]) < 1)
-        {
-            std::cout << "Arguments <Number of input neurons> <Number of output neurons> is not corect\n";
-            std::cout << "Arguments cannot be less than 1\n";
-            return;
-        }
-        if (value[1] == "PERCEPTRON")
-        {
-            network = new ai::AI(value[0], ai::PERCEPTRON);
-            network->CreateNetwork(std::stoi(value[2]), std::stoi(value[3]));
-            delete network;
-        }
-        std::cout << "Successfully Created\n";
+        CreateProject(argc, argv);
         return;
     }
     else if (std::strcmp(argv[1], "OpenSession") == 0)
@@ -155,7 +164,7 @@ void CmdAndAPI::commandInput(int argc, char* argv[])
                         send(clientSocket, tempMessege.c_str(), tempMessege.size(), 0);
                         delete network;
                     }
-                    network = new ai::AI(values[1], ai::PERCEPTRON);
+                    network = new ai::AI(values[1], ai::PERCEPTRON, ai::DATA_DATA);
                     network->CreateNetwork(std::stoi(values[4]), std::stoi(values[3]));
                 }
                 else
@@ -215,19 +224,10 @@ void CmdAndAPI::commandInput(int argc, char* argv[])
                     send(clientSocket, "Project is not create", 22, 0);
                     continue;
                 }
-                std::list<bool> tempList;
+                std::list<long double> tempList;
                 for (char c : values[1])
                 {
-                    std::cout << c << '\n';
-                    if (c == '1')
-                        tempList.push_back(1);
-                    else if (c == '0')
-                        tempList.push_back(0);
-                    else
-                    {
-                        send(clientSocket, "Value is not correct", 21, 0);
-                        continue;
-                    }
+                    tempList.push_back(c);
                 }
                 std::cout << "-----------\n";
                 for (auto pair : tempList)

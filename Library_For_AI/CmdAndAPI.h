@@ -6,6 +6,14 @@
 #pragma comment(lib, "ws2_32.lib")
 class CmdAndAPI
 {
+    ai::AI* network = nullptr;
+    //Команды
+
+    void Help();
+
+    void CreateProject(int argc, char* argv[]);
+
+    //---------------------------------------------------------------------------------------------------
     bool createNetwork(WSADATA& wsaData, SOCKET& listeningSocket)
     {
         if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {

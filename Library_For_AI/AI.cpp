@@ -1,23 +1,23 @@
 #include "AI.h"
 namespace ai
 {
-	void AI::Initialization(frame type)
+	void AI::Initialization(frame type, howOpen typeConvert)
 	{
-        this->type = type;
+        typeArchitecture = type;
 		switch (type)
 		{
-		case 0: ai = std::make_shared<perceptron>(nameProjectFile); break;
-		case 1: ai = std::make_shared<freeNetwork>(nameProjectFile); break;
+		case 0: ai = std::make_shared<perceptron>(nameProjectFile, typeConvert); break;
+		case 1: ai = std::make_shared<freeNetwork>(nameProjectFile, typeConvert); break;
 		default:break;
 		}
 	}
 
     std::shared_ptr<Graf> AI::Initialization()
     {
-        switch (type)
+        switch (typeArchitecture)
         {
-        case 0: tryAi = std::make_shared<perceptron>(nameProjectFile); break;
-        case 1: tryAi = std::make_shared<freeNetwork>(nameProjectFile); break;
+        case 0: tryAi = std::make_shared<perceptron>(nameProjectFile, openingType); break;
+        case 1: tryAi = std::make_shared<freeNetwork>(nameProjectFile, openingType); break;
         default:break;
         }
         tryAi->CreateNetwork(nameProjectFile);
@@ -48,272 +48,232 @@ namespace ai
         doCreate = 1;
     }
 
-	std::list<bool> AI::Computation(std::list<bool> vaules)
+	std::list<NWDT> AI::Computation(std::list<NWDT> vaules)
 	{
 		if (!doCreate)
 		{
-			std::list<bool> result;
+			std::list<NWDT> result;
 			return result;
 		}
 		return ai->Computation(vaules);
 	}
 
-    float AI::testCycle(std::string nameFile)
+    float AI::testCycle(std::list<std::list<NWDT>> DataSetList, std::list<std::list<NWDT>> Answer)
     {
+        if (DataSetList.size() != Answer.size())
+            return -1;
+
         float percentResult = 0;
         float counter = 0;
-        std::string line;
-        std::ifstream DATASetFile;
-        DATASetFile.open(nameFile);
-        while (std::getline(DATASetFile, line)) {
-            std::string Value = line.substr(0, line.find(' '));
-            std::string Result = line.substr(Value.size() + 1);
-            std::list<bool> value;
-            std::list<bool> result;
-            for (char ch : Value)
+        bool isNotEnd = true;
+        for (std::list<std::list<NWDT>>::iterator data = DataSetList.begin(),
+            answer = Answer.begin(); isNotEnd; data++, answer++)
+        {
+            auto temp = Computation(*data);
+            if (temp == *answer)
             {
-                if (ch == '0')
-                    value.push_back(0);
-                else
-                    value.push_back(1);
-            }
-            for (char ch : Result)
-            {
-                if (ch == '0')
-                    result.push_back(0);
-                else
-                    result.push_back(1);
-            }
-            auto res = ai->Computation(value);
-            if (result == res)
-            {
+                counter++;
                 ai->SelectionOfWeights(1);
-                percentResult++;
             }
             else
             {
+                counter = 0;
+                answer = Answer.begin();
+                data = DataSetList.begin();
                 ai->SelectionOfWeights(0);
             }
-            counter++;
-            Value.clear();
-            Result.clear();
-            value.clear();
-            result.clear();
+
+            //выход из алгоритма если все совпадает
+            if (counter == DataSetList.size())
+            {
+                isNotEnd = false;
+            }
         }
-        percentResult = (percentResult / counter) * 100;
-        DATASetFile.close();
-        ai->SummarizeWeightSelection();
+        percentResult = (counter / DataSetList.size()) * 100;
         return percentResult;
     }
 
-    float AI::testCycle(std::shared_ptr<Graf> test, std::string nameFile)
+    float AI::testCycle(std::shared_ptr<Graf> test, std::list<std::list<NWDT>> DataSetList, std::list<std::list<NWDT>> Answer)
     {
-        float percentResult = 0;
-        float counter = 0;
+        return 0;
+    }
+
+    //void AI::DataSetFolder(std::string nameFolder, float percent)
+    //{
+    //    std::list<std::list<NWDT>> DataSetList, AnswerList;
+    //    std::filesystem::path folderPath(nameFolder);
+    //    if (!std::filesystem::exists(folderPath) || !std::filesystem::is_directory(folderPath))
+    //    {
+    //        std::cerr << "Folder does not exist or is not a directory" << std::endl;
+    //        return;
+    //    }
+    //    // Итерируемся по файлам в папке
+    //    for (const auto& entry : std::filesystem::directory_iterator(folderPath))
+    //    {
+    //        std::filesystem::path filePath = entry.path();
+    //        std::string fileName = filePath.filename().string();
+    //        // Проверка, что файл начинается с "Data-" для датасета
+    //        if (fileName.find("Data-") == 0)
+    //        {
+    //            // Создаем путь для файла ответа
+    //            std::filesystem::path answerFilePath = folderPath / ("Answ-" + filePath.stem().string().substr(5) + filePath.extension().string());
+    //            // Читаем файлы побитово как данные для DataSet и Answer
+    //            auto dataList = DataFileConverter(filePath.string(), amountIn);
+    //            auto answerList = DataFileConverter(answerFilePath.string(), amountOut);
+    //            DataSetList.push_back(dataList);
+    //            AnswerList.push_back(answerList);
+    //        }
+    //    }
+    //    // Проводим тестирование на основе прочитанных данных
+    //    auto temp = testCycle(DataSetList, AnswerList);
+    //    while (percent > temp)
+    //    {
+    //        temp = testCycle(DataSetList, AnswerList);
+    //    }
+    //}
+
+    void AI::DataSetFolder(std::string nameFolder, std::list<std::list<NWDT>>& Data)
+    {
+        std::filesystem::path folderPath(nameFolder);
+        if (!std::filesystem::exists(folderPath) || !std::filesystem::is_directory(folderPath))
+        {
+            std::cerr << "Folder does not exist or is not a directory" << std::endl;
+            return;
+        }
+        // Итерируемся по файлам в папке
+        for (const auto& entry : std::filesystem::directory_iterator(folderPath))
+        {
+            std::filesystem::path filePath = entry.path();
+            std::string fileName = filePath.filename().string();
+            // Проверка, что файл начинается с "Data-" для датасета
+            if (fileName.find("Data-") == 0)
+            {
+                // Читаем файлы побитово как данные для DataSet и Answer
+                auto dataList = DataFileConverter(filePath.string(), amountIn);
+                Data.push_back(dataList);
+            }
+        }
+    }
+
+    //void AI::DataSetFile(std::string nameFile, float percent)
+    //{
+    //    std::string line;
+    //    std::ifstream DATASetFile;
+    //    DATASetFile.open(nameFile);
+    //    std::list<std::list<NWDT>> DataSetList, AnswerList;
+    //    while (std::getline(DATASetFile, line)) {
+    //        std::string Value = line.substr(0, line.find(' '));
+    //        std::string Result = line.substr(Value.size() + 1);
+    //        std::vector<char> tempV(Value.begin(), Value.end()), tempA(Result.begin(), Result.end());
+    //        DataSetList.push_back(DataBlockConverter(tempV, amountIn));
+    //        AnswerList.push_back(DataBlockConverter(tempA, amountOut));
+    //    }
+    //    auto temp = testCycle(DataSetList, AnswerList);
+    //    while (percent > temp)
+    //    {
+    //        temp = testCycle(DataSetList, AnswerList);
+    //    }
+    //}
+
+    void AI::DataSetFile(std::string nameFile, std::list<std::list<NWDT>>& Data)
+    {
         std::string line;
         std::ifstream DATASetFile;
         DATASetFile.open(nameFile);
         while (std::getline(DATASetFile, line)) {
-            std::string Value = line.substr(0, line.find(' '));
-            std::string Result = line.substr(Value.size() + 1);
-            std::list<bool> value;
-            std::list<bool> result;
-            for (char ch : Value)
-            {
-                if (ch == '0')
-                    value.push_back(0);
-                else
-                    value.push_back(1);
-            }
-            for (char ch : Result)
-            {
-                if (ch == '0')
-                    result.push_back(0);
-                else
-                    result.push_back(1);
-            }
-            auto res = test->Computation(value);
-            if (result == res)
-            {
-                test->SelectionOfWeights(1);
-                percentResult++;
-            }
-            else
-            {
-                test->SelectionOfWeights(0);
-            }
-            counter++;
-            Value.clear();
-            Result.clear();
-            value.clear();
-            result.clear();
+            std::vector<char> tempV(line.begin(), line.end());
+            Data.push_back(DataBlockConverter(tempV, amountIn));
         }
-        percentResult = (percentResult / counter) * 100;
-        DATASetFile.close();
-        test->SummarizeWeightSelection();
-        return percentResult;
     }
 
-    std::shared_ptr<Graf> AI::ArchitectureGenerator(std::shared_ptr<Graf> sampler, std::string nameFile)
+    std::list<NWDT> AI::DataFileConverter(std::string nameFile, int maxBlocks)
     {
-        auto amount = sampler->CounterCombination();
-        float theBestRes = 0;
-        std::vector<std::shared_ptr<Graf>> colisionesRes, tempColisionRes;
-        std::shared_ptr<Graf> temp;
-        for (int i = amount; i > 0; --i)
-        {
-            tryAi = Initialization();
-            tryAi->TryArchitecture(i);
+        std::ifstream file(nameFile, std::ios::binary);
+        std::list<NWDT> doubles;
 
-            float tempCycel = testCycle(tryAi, nameFile);
-            for (size_t j = 0; j < amount; j++)
-            {
-                tempCycel = (tempCycel + testCycle(tryAi, nameFile)) / 2;
+        if (!file)
+            return doubles;
+
+        const std::size_t blockSize = sizeof(NWDT);
+        std::vector<char> buffer(blockSize);
+        unsigned int blocksRead = 0;
+        std::streamsize bytesRead;
+        double value;
+        while (file.read(buffer.data(), blockSize) && blocksRead < maxBlocks) {
+            bytesRead = file.gcount();
+            if (bytesRead == blockSize) {
+                std::memcpy(&value, buffer.data(), blockSize);
+                doubles.push_back(value);
             }
-            if (theBestRes < tempCycel)
-            {
-                theBestRes = tempCycel;
-                temp = tryAi;
-                colisionesRes.clear();
+            else {
+                std::vector<char> incompleteBlock(blockSize, 0);
+                std::memcpy(incompleteBlock.data(), buffer.data(), bytesRead);
+
+                std::memcpy(&value, incompleteBlock.data(), blockSize);
+                doubles.push_back(value);
+                break;
             }
-            if (theBestRes == tempCycel)
-            {
-                colisionesRes.push_back(tryAi);
-            }
+            ++blocksRead;
         }
-
-        while (colisionesRes.size() >= 1)
-        {
-            tempColisionRes = colisionesRes;
-            for (auto pair : colisionesRes)
-            {
-                float tempCycel = testCycle(pair, nameFile);
-                for (size_t j = 0; j < amount; j++)
-                {
-                    tempCycel = (tempCycel + testCycle(pair, nameFile)) / 2;
-                }
-                if (theBestRes < tempCycel)
-                {
-                    theBestRes = tempCycel;
-                    temp = pair;
-                    tempColisionRes.clear();
-                }
-                if (theBestRes == tempCycel)
-                {
-                    tempColisionRes.push_back(pair);
-                }
-            }
-            colisionesRes = tempColisionRes;
-        }
-
-        return temp;
+        return doubles;
     }
 
-    void AI::SelectionOfWeights(bool res)
+    std::list<NWDT> AI::DataBlockConverter(std::vector<char> data, int maxBlocks)
     {
-        if (!doCreate)
-        {
-            return;
+        std::list<NWDT> doubles;
+
+        const std::size_t blockSize = sizeof(NWDT);
+        unsigned int blocksRead = 0;
+        std::streamsize bytesRead;
+        double value;
+        std::size_t totalSize = data.size();
+        std::size_t currentPos = 0;
+
+        while (currentPos + blockSize <= totalSize && blocksRead < maxBlocks) {
+            std::vector<char> buffer(data.begin() + currentPos, data.begin() + currentPos + blockSize);
+            std::memcpy(&value, buffer.data(), blockSize);
+            doubles.push_back(value);
+
+            currentPos += blockSize;
+            ++blocksRead;
         }
-        ai->SelectionOfWeights(res);
+
+        if (currentPos < totalSize && blocksRead < maxBlocks) {
+            std::size_t remainingBytes = totalSize - currentPos;
+            std::vector<char> incompleteBlock(blockSize, 0); 
+            std::memcpy(incompleteBlock.data(), data.data() + currentPos, remainingBytes);
+
+            std::memcpy(&value, incompleteBlock.data(), blockSize);
+            doubles.push_back(value);
+        }
+
+        return doubles;
     }
 
-    void AI::DatasetTrainingDetailed(std::string nameFile, float percent)
+    void ai::AI::DatasetTraining(std::string dataIn, std::string dataOut, float percent, howOpen type)
     {
-        //std::list<float> listValueForEditStruct;
-        //listValueForEditStruct.push_front(controlChek);
-        //сделать слияние разных вариантов файлов, так чтобы все ребра были средним значением
-        //if (controlChekMaxValue < controlChek)
-        //{
-        //    std::shared_ptr<Graf> temp;
-        //    std::cout << "=========================================================\nres: " << controlChek << "\t" << mainCounter << '\n' << "=========================================================\n";
-        //    controlChekMaxValue = controlChek;
-        //    std::string tempName;
-        //    tempName = std::to_string(controlChek);
-        //    tempName = tempName + ".txt";
-        //    ai->SaveNetwork(tempName);
-        //    ai->CreateNetwork(tempName);
-        //}
-        //else if (controlChekMaxValue == controlChek)
-        //{
-        //    std::cout << "res: " << controlChek << "\t" << mainCounter << '\n';
-        //    controlChekMaxValue = controlChek;
-        //    std::string tempName;
-        //    tempName = std::to_string(controlChek);
-        //    tempName = std::to_string(mainCounter)+ "-" + tempName + ".txt";
-        //    ai->SaveNetwork(tempName);
-        //}
-        //if (listValueForEditStruct.size() > counterForEditStruct)
-        //{
-        //    listValueForEditStruct.pop_back();
-        //}
-        //std::cout << "res: " << controlChek << "\t" << mainCounter << '\n';
-
-        //if (areAllValuesEqual(listValueForEditStruct) && listValueForEditStruct.size() == counterForEditStruct)
-        //{
-        //    generation++;
-        //    listValueForEditStruct.clear();
-        //    std::cout << "ArchitectureGenerator\n";
-        //    std::vector<std::shared_ptr<Graf>> arrAI = ArchitectureGenerator(ai, nameFile);
-        //    std::vector<float> res;
-        //    std::shared_ptr<Graf> temp;
-        //    float theBestRes = 0;
-        //    std::cout << "Number Generation: " << mainCounterForEditStruct << "\n\n";
-        //    for (size_t i = 0; i < arrAI.size(); i++)
-        //    {
-        //        float tempCycel = testCycle(arrAI[i], nameFile);
-        //        for (size_t j = 0; j < counterIteration; j++)
-        //        {
-        //            tempCycel = (tempCycel + testCycle(arrAI[i], nameFile)) / 2;
-        //        }
-        //        arrAI[i]->Show();
-        //        std::cout << "Res: " << tempCycel << "\n\n\n";
-        //        res.push_back(tempCycel);
-        //    }
-        //    for (size_t i = 0; i < res.size(); i++)
-        //    {
-        //        std::cout << "res: " << res[i] << '\t' << i << '\n';
-        //        if (theBestRes < res[i])
-        //        {
-        //            theBestRes = res[i];
-        //            temp = arrAI[i];
-        //        }
-        //    }
-        //    std::cout << "\n\n\n";
-        //    temp->Show();
-        //    temp->SaveNetwork("lalalala.txt");
-        //    std::cout << "The Best res: " << theBestRes << '\n';
-        //    ai = temp;
-        //    res.clear();
-        //    SaveNetwork();
-        //    mainCounter = 0;
-        //    mainCounterForEditStruct++;
-        //}
+        std::list<std::list<NWDT>> DataSetList, AnswerList;
+        type = openingType;
+        switch (type)
+        {
+        case ai::DATA_DATA:DataSetFile(dataIn, DataSetList); DataSetFile(dataOut, AnswerList);break;
+        case ai::DATA_FILE:DataSetFile(dataIn, DataSetList); DataSetFolder(dataOut, AnswerList);break;
+        case ai::FILE_DATA:DataSetFolder(dataIn, DataSetList); DataSetFile(dataOut, AnswerList);break;
+        case ai::FILE_FILE:DataSetFolder(dataIn, DataSetList); DataSetFolder(dataOut, AnswerList);break;
+        default:break;
+        }
+        auto temp = testCycle(DataSetList, AnswerList);
+        while (percent > temp)
+        {
+            temp = testCycle(DataSetList, AnswerList);
+        }
     }
 
-	void AI::DatasetTrainingRough(std::string nameFile, float percent)
-	{
-        if (percent > 100 || percent == 0 || nameFile.size() == 0 || (!doCreate))
-            return;
-
-        unsigned int mainCounterForEditStruct = 0, mainCounter = 0;
-        float controlChek = 0;
-
-        ai = ArchitectureGenerator(ai, nameFile);
-
-        while (percent > controlChek)
-        {
-            mainCounter++;
-            controlChek = testCycle(nameFile);
-            std::cout << mainCounter << '\t' << controlChek << '\n';
-        }
-        std::cout << "finsh: " << mainCounter << '\n';
-	}
-
-	AI::AI(std::string nameProject, frame type)
+	AI::AI(std::string nameProject, frame type, howOpen typeConvert)
 	{
         nameProjectFile = nameProject + ".txt";
-		Initialization(type);
+        openingType = typeConvert;
+		Initialization(type, typeConvert);
 
         //Открываем файлы с сформированными именами
         std::ofstream AIFile(nameProjectFile, std::ios::out);
@@ -323,21 +283,36 @@ namespace ai
     AI::AI(std::string AIFile)
     {
         std::ifstream File(AIFile);
-        char type;
+
+        
+        char type, typeOpen;
         //Проверка, открылся ли файл успешно
         if (!File) {
             return;//Выход из функции
         }
 
+        File.get(typeOpen);
+
+        switch (typeOpen)
+        {
+        case '1': openingType = DATA_DATA; break;
+        case '2': openingType = DATA_FILE; break;
+        case '3': openingType = FILE_DATA; break;
+        case '4': openingType = FILE_FILE; break;
+        default: break;
+        }
+        File.get(type);//пропустить символ перехода на новою строку
         File.get(type);
 
         switch (type)
         {
-        case 'P': Initialization(PERCEPTRON); break;
-        case 'F':Initialization(FREENETWORK); break;
+        case 'P': Initialization(PERCEPTRON, openingType); break;
+        case 'F':Initialization(FREENETWORK, openingType); break;
         default:return; break;
         }
         CreateNetwork(AIFile);
+        amountIn = ai->amountIn;
+        amountOut = ai->amountOut;
     }
 
     void AI::Logging()
@@ -347,12 +322,6 @@ namespace ai
 
     void AI::Test()
     {
-        ai->Test();
-    }
-    
-    std::string AI::getNameProject()
-    {
-        return nameProjectFile;
     }
 
 	void AI::SaveNetwork()

@@ -19,6 +19,12 @@ namespace ai
 			unsigned long long int amountOfCalculations;
 		};
 
+		struct StorageMinMax
+		{
+			long double min;
+			long double max;
+		};
+
 		std::shared_ptr<std::list<StorageCell>> listStorageCell;
 		std::shared_ptr<Edges> beforeEdges;
 		std::string nameEdges;
@@ -31,7 +37,12 @@ namespace ai
 		std::shared_ptr<Vertex> vertex;
 		std::shared_ptr<Edges> edges;
 
+		unsigned int amountIn;
+		unsigned int amountOut;
+
 		unsigned long long int amountGoodTry = 0;
+
+		howOpen typeConvert;
 
 		//хеш-таблица дл€ индексации ребер
 		std::unordered_map<std::string, std::shared_ptr<Edges>> heshMapEdges;
@@ -48,9 +59,9 @@ namespace ai
 		{}
 		
 		//компил€ци€ нейроной сети
-		virtual std::list<bool> Computation(std::list<bool> vaules)
+		virtual std::list<NWDT> Computation(std::list<NWDT> vaules)
 		{
-			std::list<bool> res;
+			std::list<NWDT> res;
 			return res;
 		}
 		
@@ -123,6 +134,34 @@ namespace ai
 				nameEdges = randomIter->first;//запись ребра которое помен€ли
 			}
 		}
+
+		//float CollisionOfWeights(std::list<std::list<NWDT>> DataSetList, std::list<std::list<NWDT>> Answer)
+		//{
+		//	float percentResult = 0;
+		//	float counter = 0;
+		//	bool isNotEnd = true;
+		//	for (std::list<std::list<NWDT>>::iterator data = DataSetList.begin(), 
+		//		answer = Answer.begin(); isNotEnd ;data++, answer++)
+		//	{
+		//		auto temp = Computation(*data);
+		//		if (temp == *answer)
+		//		{
+		//			counter++;
+		//		}
+		//		else
+		//		{
+		//			counter = 0;
+		//			answer = Answer.begin();
+		//			data = DataSetList.begin();
+		//		}
+		//		//выход из алгоритма если все совпадает
+		//		if (counter == DataSetList.size())
+		//		{
+		//			isNotEnd = false;
+		//		}
+		//	}
+		//}
+		
 		//----------------------------------------------------------------------------------------
 
 		void ClearMapTraing() {
@@ -166,8 +205,9 @@ namespace ai
 		virtual void Test(){
 		}
 
-		Graf(std::string nameFile)
+		Graf(std::string nameFile, howOpen typeConvert)
 		{
+			this->typeConvert = typeConvert;
 			nameProjectFile = nameFile;
 		}
 		Graf()

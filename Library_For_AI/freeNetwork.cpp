@@ -188,6 +188,8 @@ void ai::freeNetwork::SaveNetwork()
 
 	std::ofstream outputFile(nameProjectFile, std::ios::out);
 
+	outputFile << typeConvert << '\n';
+
 	outputFile << "F\n";//тип нейроной сети
 
 	outputFile << heshMapInVertex.size() << '\n' << heshMapOutVertex.size() << '\n' << heshMapInterVertex.size() << '\n';
@@ -199,9 +201,9 @@ void ai::freeNetwork::SaveNetwork()
 	outputFile.close();
 }
 
-std::list<bool> ai::freeNetwork::Computation(std::list<bool> vaules)
+std::list<NWDT> ai::freeNetwork::Computation(std::list<NWDT> vaules)
 {
-	return std::list<bool>();
+	return std::list<NWDT>();
 }
 
 //void ai::freeNetwork::Logging(std::string nameProjectFile)

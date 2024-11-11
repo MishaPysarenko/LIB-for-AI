@@ -28,7 +28,7 @@ namespace ai
 	public:
 		void CreateNetwork(size_t amountInVertex, size_t amountOutVertex) override;
 		void CreateNetwork(std::string nameFile)override;
-		std::list<bool> Computation(std::list<bool> vaules) override;
+		std::list<NWDT> Computation(std::list<NWDT> vaules) override;
 		void SaveNetwork() override;
 		void SaveNetwork(std::string nameFile) override;
 		unsigned int CounterCombination() override;
@@ -42,8 +42,9 @@ namespace ai
 
 		}
 		perceptron(){}
-		perceptron(std::string nameFile)
+		perceptron(std::string nameFile, howOpen typeConvert)
 		{
+			this->typeConvert = typeConvert;
 			nameProjectFile = nameFile;
 		}
 		perceptron(const ai::perceptron& sample)

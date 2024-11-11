@@ -4,17 +4,12 @@
 #include "LogManager.h"
 namespace ai
 {
-	enum frame
-	{
-		PERCEPTRON,
-		FREENETWORK
-	};
-
 	class AI
 	{
 		std::string nameProjectFile;
 
-		frame type;
+		frame typeArchitecture;
+		howOpen openingType;
 
 		std::shared_ptr<Graf> ai;
 		std::shared_ptr<Graf> tryAi;
@@ -24,37 +19,43 @@ namespace ai
 		unsigned int amountOut;
 		bool doCreate = 0, doNamePrj = 0;
 
-		void Initialization(frame type);
+		void Initialization(frame typetype, howOpen Convert);
 		std::shared_ptr<Graf> Initialization();
 
 		void CreateNetwork(std::string nameFile);
 
-		float testCycle(std::string nameFile);
-		float testCycle(std::shared_ptr<Graf>, std::string nameFile);
+		float testCycle(std::list<std::list<NWDT>> DataSetList, std::list<std::list<NWDT>> Answer);
+		float testCycle(std::shared_ptr<Graf>, std::list<std::list<NWDT>> DataSetList, std::list<std::list<NWDT>> Answer);
 
-		std::shared_ptr<Graf> ArchitectureGenerator(std::shared_ptr<Graf> sampler, std::string nameFile);
+		void DataSetFolder(std::string nameFolder, std::list<std::list<NWDT>> & Data);
+		void DataSetFile(std::string nameFile, std::list<std::list<NWDT>>& Data);
 
+		std::list<NWDT> DataFileConverter(std::string nameFile, int maxBlocks = 0);
+		std::list<NWDT> DataBlockConverter(std::vector<char> data, int maxBlocks = 0);
 	public:
-
-		std::string getNameProject();
-
-		void SelectionOfWeights(bool res);
-
 		void CreateNetwork(size_t amountInVertex, size_t amountOutVertex);
 
-		std::list<bool> Computation(std::list<bool> vaules);
+		std::list<NWDT> Computation(std::list<NWDT> vaules);
 
-		void DatasetTrainingDetailed(std::string nameFile, float percent);
-
-		void DatasetTrainingRough(std::string nameFile, float percent);
-
-		AI(std::string nameProject, frame type);
-		AI(std::string AIFile);
+		void DatasetTraining( std::string dataIn, std::string dataOut, float percent, howOpen type = ai::howOpen::DATA_DATA);
 
 		void Logging();
 
 		void Test();
 
 		void SaveNetwork();
+
+		std::string getNameProject()
+		{
+			return nameProjectFile;
+		}
+
+		void SelectionOfWeights(bool result)
+		{
+			ai->SelectionOfWeights(result);
+		}
+
+		AI(std::string nameProject, frame type, howOpen typeConvert);
+		AI(std::string AIFile);
 	};
 }

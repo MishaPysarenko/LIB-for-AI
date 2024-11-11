@@ -3,8 +3,12 @@
 
 int main(int argc, char* argv[])
 {
-    ai::AI graf("test", ai::PERCEPTRON);
-    graf.CreateNetwork(4, 1);
-    graf.DatasetTrainingRough("DataSet.txt", 100);
+    ai::AI graf("1", ai::PERCEPTRON, ai::DATA_DATA);
+    graf.CreateNetwork(100, 50);
+
+    //ai::AI graf("test.txt");
+    //graf.DatasetTraining("TestDATASet/DATA.txt", "TestDATASet/DATA.txt", 100);
+
+    std::cout << '\n';
     return 0;
 }
