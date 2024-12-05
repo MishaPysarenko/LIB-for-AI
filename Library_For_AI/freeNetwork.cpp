@@ -67,7 +67,7 @@ void ai::freeNetwork::AddOutVertex()
 void ai::freeNetwork::AddVertex(std::string vertexConnected, std::string vertexAttached)
 {
 	vertex = std::make_shared<Vertex>();//создаем в динам памяти новый нейрон
-	vertex->indexVertex = "M." + std::to_string(heshMapInterVertex.size());//даем ему имя согласно тому что выходные будут с перфиском "M."
+	vertex->indexVertex = "M." + std::to_string(heshMapInterVertex.size());//даем ему имя согласно тому что промежуточные будут с перфиском "M."
 	heshMapVertex[vertex->indexVertex] = vertex;//записываем в хеш-таблицу
 	heshMapInterVertex[vertex->indexVertex] = vertex;//записываем в хеш-таблицу для промежуточных нейронов
 
@@ -106,6 +106,13 @@ void ai::freeNetwork::DeleteVertex(std::string nameVertex)
 	{
 		heshMapVertex.erase(iter);
 	}
+}
+
+void ai::freeNetwork::Test()
+{
+	std::list<long double> data = { 0.5, 0.5 };
+	CreateNetwork(5, 2);
+	Computation(data);
 }
 
 void ai::freeNetwork::CreateNetwork(size_t amountInVertex, size_t amountOutVertex)
@@ -203,6 +210,48 @@ void ai::freeNetwork::SaveNetwork()
 
 std::list<NWDT> ai::freeNetwork::Computation(std::list<NWDT> vaules)
 {
+	std::fstream LogForEdges("LogForEdges.txt", std::ios::out), LogForCom("LogForCom.txt", std::ios::out);
+	std::list<std::shared_ptr<Vertex>> tempVer, outVer;
+	for (auto ver : heshMapInVertex)
+	{
+		tempVer.push_back(ver.second);
+	}
+	for (auto ver : tempVer)
+	{
+		LogForEdges << ver->indexVertex << "\t";
+		std::cout << ver->indexVertex << "\t";
+		if (ver->listEdges->size() != 0)
+		{
+			for (auto it : *ver->listEdges)
+			{
+				//LogForEdges << "-> " << it->nextVertex->indexVertex << "\t";
+				std::cout << "-> " << it->nextVertex->indexVertex << "\t";
+				// Проверяем, есть ли элемент в списке
+				if (std::find(tempVer.begin(), tempVer.end(), it->nextVertex) == tempVer.end() || std::find(outVer.begin(), outVer.end(), it->nextVertex) == outVer.end()) {
+					// Если элемента нет, добавляем его
+					if (it->nextVertex->indexVertex[0] == 'O')
+					{
+						outVer.push_back(it->nextVertex);
+					}
+					else 
+					{ 
+						tempVer.push_back(it->nextVertex);
+						LogForCom << "\nElement " << it->nextVertex->indexVertex << " Add to list.\n";
+						std::cout << "\nElement " << it->nextVertex->indexVertex << " Add to list.\n";
+					}
+
+				}
+			}
+		}
+		LogForEdges << '\n';
+		std::cout << '\n';
+	}
+	for (auto ver : outVer)
+	{
+		LogForEdges << ver->indexVertex << "\t";
+		LogForEdges << '\n';
+		LogForCom << "\nElement " << ver->indexVertex << " Add to list.\n";
+	}
 	return std::list<NWDT>();
 }
 

@@ -322,6 +322,7 @@ namespace ai
 
     void AI::Test()
     {
+        ai->Test();
     }
 
 	void AI::SaveNetwork()

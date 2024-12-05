@@ -1,5 +1,6 @@
 #pragma once
 #include "Graf.h"
+#include <algorithm> // Äëÿ std::find
 namespace ai
 {
 	class freeNetwork : public Graf
@@ -36,13 +37,14 @@ namespace ai
 		void DeleteVertex(std::string nameVertex);
 
 	public:
+		void Test()override;
 		void CreateNetwork(size_t amountInVertex, size_t amountOutVertex) override;
 		void CreateNetwork(std::string nameFile)override;
 		std::list<NWDT> Computation(std::list<NWDT> vaules) override;
 		void SaveNetwork() override;
 		~freeNetwork()
 		{
-
+			SaveNetwork();
 		}
 		freeNetwork(std::string nameFile, howOpen typeConvert)
 		{

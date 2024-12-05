@@ -1,4 +1,5 @@
 #pragma once
+#include "ActivationFunction.h"
 #include "Edges.h"
 
 #include <string>
@@ -16,7 +17,7 @@ namespace ai
 		
 		Vertex(long double (*activationFuncPtr)(long double) = nullptr, unsigned long long int iterFunc = 0);
 		
-		long double ActivationFunc(long double value, long double(*activationFunc)(long double) = nullptr);
+		long double ActivationFunc(long double value = NULL, long double(*activationFunc)(long double) = nullptr);
 
 		//индекс нейрона или имя
 		std::string indexVertex;
@@ -26,5 +27,7 @@ namespace ai
 
 		unsigned long long int counterPrt;
 		unsigned long long int iterFunc;
+
+		NWDT value = 0;
 	};
 }

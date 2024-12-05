@@ -9,6 +9,10 @@ ai::Vertex::Vertex(long double(*activationFuncPtr)(long double), unsigned long l
 
 long double ai::Vertex::ActivationFunc(long double value, long double(*activationFunc)(long double))
 {
+    if (value == NULL)
+    {
+        value = this->value;
+    }
     // Проверяем, установлен ли указатель на функцию
     if (this->activationFunc != nullptr)
     {
